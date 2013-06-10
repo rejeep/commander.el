@@ -80,7 +80,7 @@
 
 (ert-deftest test-commander-required-argument-not-present-next-is-option ()
   (with-mock
-   (mock (help "--command") :times 1)
+   (mock (error "Option `%s` requires argument" "--help") :times 1)
    (commander
     (option "--help <command>" "COMMAND HELP" 'help)
     (parse '("--help" "--command")))))
@@ -113,16 +113,46 @@
     (option "--help [command]" "COMMAND HELP" 'help "all")
     (parse '("--help")))))
 
+(ert-deftest test-commander-option-zero-or-more-no-arguments ()
+  (with-mock
+   (mock (help) :times 1)
+   (commander
+    (option "--help [*]" "HELP" 'help)
+    (parse '("--help")))))
+
+(ert-deftest test-commander-option-zero-or-more-with-arguments ()
+  (with-mock
+   (mock (help "foo" "bar" "baz") :times 1)
+   (commander
+    (option "--help [*]" "HELP" 'help)
+    (parse '("--help" "foo" "bar" "baz")))))
+
+(ert-deftest test-commander-option-one-or-more-no-arguments ()
+  (with-mock
+   (mock (error "Option `%s` requires at least one argument" "--help") :times 1)
+   (commander
+    (option "--help <*>" "HELP" 'help)
+    (parse '("--help")))))
+
+(ert-deftest test-commander-option-one-or-more-with-arguments ()
+  (with-mock
+   (mock (help "foo" "bar" "baz") :times 1)
+   (commander
+    (option "--help <*>" "HELP" 'help)
+    (parse '("--help" "foo" "bar" "baz")))))
+
 (ert-deftest test-commander-mixed ()
   (with-mock
    (mock (x) :times 1)
    (mock (help "bar") :times 1)
-   (mock (show "baz") :times 1)
+   (mock (show "qux") :times 1)
+   (mock (command) :times 1)
    (commander
     (option "-x" "X" 'x)
     (option "--show <command>" "SHOW" 'show)
     (option "--help [command]" "HELP" 'help)
-    (parse '("-x" "--help" "bar" "--show" "baz")))))
+    (command "command" "COMMAND" 'command)
+    (parse '("-x" "--help" "bar" "--show" "qux" "command")))))
 
 (ert-deftest test-commander-command-simple ()
   (with-mock
@@ -144,6 +174,20 @@
    (commander
     (command "help <command>" "HELP" 'help)
     (parse '("help")))))
+
+(ert-deftest test-commander-command-one-or-more-no-arguments ()
+  (with-mock
+   (mock (error "Command `%s` requires at least one argument" "help") :times 1)
+   (commander
+    (command "help <*>" "HELP" 'help)
+    (parse '("help")))))
+
+(ert-deftest test-commander-command-one-or-more-with-arguments ()
+  (with-mock
+   (mock (help "foo" "bar" "baz") :times 1)
+   (commander
+    (command "help <*>" "HELP" 'help)
+    (parse '("help" "foo" "bar" "baz")))))
 
 (ert-deftest test-commander-command-optional-argument-present ()
   (with-mock
@@ -170,37 +214,25 @@
   (with-mock
    (mock (help) :times 1)
    (commander
-    (command "help *" "HELP" 'help)
+    (command "help [*]" "HELP" 'help)
     (parse '("help")))))
 
 (ert-deftest test-commander-command-zero-or-more-with-arguments ()
   (with-mock
    (mock (help "foo" "bar" "baz") :times 1)
    (commander
-    (command "help *" "HELP" 'help)
-    (parse '("help" "foo" "bar" "baz")))))
-
-(ert-deftest test-commander-command-one-or-more-no-arguments ()
-  (with-mock
-   (mock (error "Command `%s` requires at least one argument" "help") :times 1)
-   (commander
-    (command "help <*>" "HELP" 'help)
-    (parse '("help")))))
-
-(ert-deftest test-commander-command-one-or-more-with-arguments ()
-  (with-mock
-   (mock (help "foo" "bar" "baz") :times 1)
-   (commander
-    (command "help <*>" "HELP" 'help)
+    (command "help [*]" "HELP" 'help)
     (parse '("help" "foo" "bar" "baz")))))
 
 (ert-deftest test-commander-command-with-options ()
   (with-mock
    (mock (help "foo") :times 1)
+   (mock (foo "bar") :times 1)
+   (mock (qux) :times 1)
    (commander
-    (option "--foo <arg>" "FOO" 'ignore)
-    (option "--qux" "QUX" 'ignore)
-    (command "help *" "HELP" 'help)
+    (option "--foo <arg>" "FOO" 'foo)
+    (option "--qux" "QUX" 'qux)
+    (command "help [*]" "HELP" 'help)
     (parse '("--foo" "bar" "help" "foo" "--qux")))))
 
 (ert-deftest test-commander-command-not-registered ()
