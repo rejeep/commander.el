@@ -1,4 +1,4 @@
-;;; commander.el --- Command line parser
+;;; commander.el --- Emacs command line parser
 
 ;; Copyright (C) 2013 Johan Andersson
 
