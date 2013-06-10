@@ -35,7 +35,7 @@
 (require 'dash)
 
 (defstruct commander-option flag description function required-argument optional-argument default-value)
-(defstruct commander-command command description function)
+(defstruct commander-command command description function required-argument optional-argument default-value zero-or-more one-or-more)
 
 (defvar commander-options nil)
 (defvar commander-commands nil)
@@ -68,19 +68,47 @@
          :default-value default-value)))
      (-map 's-trim (s-split "," flags)))))
 
-(defun commander--command (command description function)
-  (add-to-list
-   'commander-commands
-   (make-commander-command
-    :command command
-    :description description
-    :function function)))
+(defun commander--command (command description function &optional default-value)
+  (let ((required-argument) (optional-argument) (zero-or-more) (one-or-more))
+    (let ((matches (s-match "\\([a-z]+\\) <\\([a-z]+\\)>$" command)))
+      (when matches
+        (setq command (nth 1 matches))
+        (setq required-argument (nth 2 matches))))
+    (let ((matches (s-match "\\([a-z]+\\) \\[\\([a-z]+\\)\\]$" command)))
+      (when matches
+        (setq command (nth 1 matches))
+        (setq optional-argument (nth 2 matches))))
+    (let ((matches (s-match "\\([a-z]+\\) \\*$" command)))
+      (when matches
+        (setq command (nth 1 matches))
+        (setq zero-or-more t)))
+    (let ((matches (s-match "\\([a-z]+\\) <\\*>$" command)))
+      (when matches
+        (setq command (nth 1 matches))
+        (setq one-or-more t)))
+    (add-to-list
+     'commander-commands
+     (make-commander-command
+      :command command
+      :description description
+      :function function
+      :required-argument required-argument
+      :optional-argument optional-argument
+      :default-value default-value
+      :zero-or-more zero-or-more
+      :one-or-more one-or-more))))
 
 (defun commander--find-option (option)
   (-first
    (lambda (commander-option)
      (equal (commander-option-flag commander-option) option))
    commander-options))
+
+(defun commander--find-command (command)
+  (-first
+   (lambda (commander-command)
+     (equal (commander-command-command commander-command) command))
+   commander-commands))
 
 (defun commander--handle-options (arguments)
   (let ((i 0) (rest))
@@ -104,14 +132,36 @@
                                 (funcall function next-argument)))
                              (t (funcall function)))))
                     (t (error "Option `%s` not available" argument))))
-          (add-to-list 'rest argument)))
+          (add-to-list 'rest argument t)))
       (setq i (1+ i)))
     rest))
 
+(defun commander--handle-command (arguments)
+  (let* ((command (car arguments))
+         (rest (cdr arguments))
+         (commander-command (commander--find-command command)))
+    (if commander-command
+        (let ((function (commander-command-function commander-command)))
+          (cond ((commander-command-required-argument commander-command)
+                 (if rest
+                     (apply function rest)
+                   (error "Command `%s` requires argument" command)))
+                ((commander-command-optional-argument commander-command)
+                 (if rest
+                     (apply function rest)
+                   (funcall function (commander-command-default-value commander-command))))
+                ((commander-command-zero-or-more commander-command)
+                 (apply function rest))
+                ((commander-command-one-or-more commander-command)
+                 (if rest
+                     (apply function rest)
+                   (error "Command `%s` requires at least one argument" command)))
+                (t (funcall function))))
+      (error "Command `%s` not available" command))))
+
 (defun commander--parse (arguments)
   (let ((rest (commander--handle-options arguments)))
-    ;; TODO: Handle rest
-    )
+    (when rest (commander--handle-command rest)))
   (setq commander-parsing-done t))
 
 (defmacro commander (&rest forms)
@@ -119,14 +169,14 @@
   (setq commander-options nil)
   (setq commander-commands nil)
   `(cl-flet ((option
-           (flags description function &optional default-value)
-           (commander--option flags description function default-value))
-          (command
-           (command description function)
-           (commander--command command description function))
-          (parse
-           (arguments)
-           (commander--parse arguments)))
+              (flags description function &optional default-value)
+              (commander--option flags description function default-value))
+             (command
+              (command description function &optional default-value)
+              (commander--command command description function default-value))
+             (parse
+              (arguments)
+              (commander--parse arguments)))
      (setq commander-parsing-done nil)
      ,@forms
      (unless commander-parsing-done
