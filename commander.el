@@ -115,24 +115,18 @@
 
 (defmacro commander (&rest forms)
   "Specify option/command schema."
-  `(funcall 'commander--do (quote ,forms)))
-
-(defun commander--do (forms)
   (setq commander-options nil)
   (setq commander-commands nil)
-
-  (dolist (form forms)
-    ;; cl-flet
-    (pcase form
-      (`(option ,flags ,description ,function)
-       (commander--option flags description function))
-      (`(option ,flags ,description ,function ,default-value)
-       (commander--option flags description function default-value))
-      (`(command ,command ,description ,function)
-       (commander--command command description function))
-      (`(parse ,arguments)
-       (commander--parse arguments))
-      (_ (error "Invalid commander directive: %s" form)))))
+  `(flet ((option
+           (flags description function &optional default-value)
+           (commander--option flags description function default-value))
+          (command
+           (command description function)
+           (commander--command command description function))
+          (parse
+           (arguments)
+           (commander--parse arguments)))
+     ,@forms))
 
 (provide 'commander)
 
