@@ -117,4 +117,11 @@
       (option "--help" "HELP" 'help)
       (parse arguments)))))
 
+(ert-deftest test-commander-not-calling-parse ()
+  (with-mock
+   (let ((command-line-args-left '("--" "--help")))
+     (mock (help) :times 1)
+     (commander
+      (option "--help" "HELP" 'help)))))
+
 (ert-run-tests-batch-and-exit)

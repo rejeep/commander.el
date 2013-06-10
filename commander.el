@@ -39,6 +39,7 @@
 
 (defvar commander-options nil)
 (defvar commander-commands nil)
+(defvar commander-parsing-done nil)
 
 (defconst commander-option-re
   "\\(-[A-Za-z0-9-]\\|--[A-Za-z0-9][A-Za-z0-9-]+\\)"
@@ -111,7 +112,7 @@
   (let ((rest (commander--handle-options arguments)))
     ;; TODO: Handle rest
     )
-  )
+  (setq commander-parsing-done t))
 
 (defmacro commander (&rest forms)
   "Specify option/command schema."
@@ -126,7 +127,10 @@
           (parse
            (arguments)
            (commander--parse arguments)))
-     ,@forms))
+     (setq commander-parsing-done nil)
+     ,@forms
+     (unless commander-parsing-done
+       (commander--parse (cdr command-line-args-left)))))
 
 (provide 'commander)
 
