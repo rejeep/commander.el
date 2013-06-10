@@ -117,7 +117,7 @@
   "Specify option/command schema."
   (setq commander-options nil)
   (setq commander-commands nil)
-  `(flet ((option
+  `(cl-flet ((option
            (flags description function &optional default-value)
            (commander--option flags description function default-value))
           (command
