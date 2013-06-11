@@ -1,4 +1,4 @@
-# commander.el
+# commander.el [![Build Status](https://api.travis-ci.org/rejeep/commander.el.png?branch=master)](http://travis-ci.org/rejeep/commander.el)
 
 Command line parsing for Emacs
 
