@@ -82,6 +82,15 @@ Define an option. Examples:
      (option "--foo, -f" "Foo" 'fn)
     )
 
+#### name `(name)`
+
+Specify name in usage information.
+
+    ;;  emacs -Q -- --help
+    (commander
+     (name "my-awesome-program")
+     (option "--help" "Show usage information" 'commander-print-usage))
+
 #### parse `(arguments)`
 
 Parse `arguments` with defined schema. If `#parse` is not called
