@@ -203,6 +203,30 @@
     (when rest (commander--handle-command rest)))
   (setq commander-parsing-done t))
 
+(defun commander--usage-command (commander-command)
+  (let ((command (commander-command-command commander-command))
+        (description (commander-command-description commander-command)))
+    (s-concat " " (s-pad-right 20 " " command) description)))
+
+(defun commander--usage-option (commander-option)
+  (let ((flag (commander-option-flag commander-option))
+        (description (commander-option-description commander-option)))
+    (s-concat " " (s-pad-right 20 " " flag) description)))
+
+(defun commander-usage ()
+  "Return usage information as a string."
+  (let ((binary (file-name-nondirectory load-file-name))
+        (format-string "USAGE: %s COMMAND [OPTIONS]\n\nCOMMANDS:\n%s\n\nOPTIONS:\n%s\n")
+        (commands
+         (s-join "\n" (--map (commander--usage-command it) commander-commands)))
+        (options
+         (s-join "\n" (--map (commander--usage-option it) commander-options))))
+    (format format-string binary commands options)))
+
+(defun commander-print-usage ()
+  "Print usage information."
+  (message (commander-usage)))
+
 (defmacro commander (&rest forms)
   "Specify option/command schema."
   `(cl-flet ((option

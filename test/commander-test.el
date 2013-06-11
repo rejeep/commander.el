@@ -270,4 +270,27 @@
     (command "baz" "..." 'baz)
     (parse '("--foo" "bar" "baz")))))
 
+(ert-deftest test-commander-foo ()
+  (with-mock
+   (commander
+    (option "--foo <bar>" "..." 'ignore)
+    (option "--help" "..." 'ignore)
+    (command "baz" "..." 'ignore)
+    (command "qux" "..." 'ignore)
+    (parse '("--foo" "bar" "baz"))
+
+    (should
+     (equal
+      "USAGE: commander-test.el COMMAND [OPTIONS]
+
+COMMANDS:
+ qux                 ...
+ baz                 ...
+
+OPTIONS:
+ --help              ...
+ --foo               ...
+"
+      (commander-usage))))))
+
 (ert-run-tests-batch-and-exit)
