@@ -54,10 +54,15 @@
   zero-or-more
   one-or-more)
 
+(defstruct commander-default-command
+  command
+  arguments)
+
 (defvar commander-options nil)
 (defvar commander-commands nil)
 (defvar commander-parsing-done nil)
 (defvar commander-name nil)
+(defvar commander-default-command nil)
 
 (defconst commander-option-re
   "\\(-[A-Za-z0-9-]\\|--[A-Za-z0-9][A-Za-z0-9-]+\\)"
@@ -66,6 +71,13 @@
 (defconst commander-command-re
   "\\([A-Za-z0-9][A-Za-z0-9-]*\\)"
   "Regex matching an command.")
+
+(defun commander--default (command arguments)
+  (setq
+   commander-default-command
+   (make-commander-default-command
+    :command command
+    :arguments arguments)))
 
 (defun commander--name (name)
   (setq commander-name name))
@@ -208,6 +220,11 @@
 
 (defun commander--parse (arguments)
   (let ((rest (commander--handle-options arguments)))
+    (unless rest
+      (if commander-default-command
+          (let ((command (commander-default-command-command commander-default-command))
+                (arguments (commander-default-command-arguments commander-default-command)))
+            (setq rest (cons command arguments)))))
     (when rest (commander--handle-command rest)))
   (setq commander-parsing-done t))
 
@@ -248,9 +265,13 @@
               (commander--parse arguments))
              (name
               (name)
-              (commander--name name)))
+              (commander--name name))
+             (default
+               (command &rest arguments)
+               (commander--default command arguments)))
      (setq commander-options nil)
      (setq commander-commands nil)
+     (setq commander-default-command nil)
      (setq commander-parsing-done nil)
      ,@forms
      (unless commander-parsing-done

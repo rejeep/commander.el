@@ -91,6 +91,17 @@ Specify name in usage information.
      (name "my-awesome-program")
      (option "--help" "Show usage information" 'commander-print-usage))
 
+#### default `(command &rest arguments)`
+
+Specify default command if no command is specified.
+
+    ;;  emacs -Q -- foo
+    ;;  emacs -Q
+    (commander
+     (default "show" "stuffing")
+     (command "show <stuff>" "Show stuff" 'show)
+     (command "hide <stuff>" "Hide stuff" 'hide))
+
 #### parse `(arguments)`
 
 Parse `arguments` with defined schema. If `#parse` is not called

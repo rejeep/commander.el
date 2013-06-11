@@ -144,3 +144,33 @@
    (commander
     (command "fourty-two" "..." 'command/fourty-two)
     (parse '("fourty-two")))))
+
+(ert-deftest test-commander-command-default-with-command ()
+  (with-mock
+   (mock (foo) :times 1)
+   (not-called bar)
+   (commander
+    (default "foo")
+    (command "foo" "..." 'foo)
+    (command "bar" "..." 'bar)
+    (parse '("foo")))))
+
+(ert-deftest test-commander-command-default-without-command ()
+  (with-mock
+   (mock (foo) :times 1)
+   (not-called bar)
+   (commander
+    (default "foo")
+    (command "foo" "..." 'foo)
+    (command "bar" "..." 'bar)
+    (parse nil))))
+
+(ert-deftest test-commander-command-default-with-arguments-without-command ()
+  (with-mock
+   (mock (foo "bar" "baz" "qux") :times 1)
+   (not-called bar)
+   (commander
+    (default "foo" "bar" "baz" "qux")
+    (command "foo [*]" "..." 'foo)
+    (command "bar" "..." 'bar)
+    (parse nil))))
