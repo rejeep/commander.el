@@ -270,7 +270,7 @@
     (command "baz" "..." 'baz)
     (parse '("--foo" "bar" "baz")))))
 
-(ert-deftest test-commander-foo ()
+(ert-deftest test-commander-usage-information ()
   (with-mock
    (commander
     (option "--foo <bar>" "..." 'ignore)
