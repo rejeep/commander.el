@@ -1,7 +1,3 @@
-(require 'ert)
-(require 'el-mock)
-(require 'commander (expand-file-name "commander.el" (directory-file-name default-directory)))
-
 (ert-deftest test-commander-parse-expression ()
   (let ((arguments '("--help")))
     (with-mock
@@ -281,7 +277,7 @@
 
     (should
      (equal
-      "USAGE: commander-test.el COMMAND [OPTIONS]
+      "USAGE: commander-testrunner.el COMMAND [OPTIONS]
 
 COMMANDS:
  qux                 ...
@@ -354,5 +350,3 @@ OPTIONS:
    (commander
     (command "fourty-two" "..." 'command/fourty-two)
     (parse '("fourty-two")))))
-
-(ert-run-tests-batch-and-exit)

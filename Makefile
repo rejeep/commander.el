@@ -3,7 +3,7 @@ CARTON ?= carton
 all: test
 
 test:
-	${CARTON} exec emacs -Q --script test/commander-test.el
+	${CARTON} exec test/commander-test
 
 elpa:
 	${CARTON} install
