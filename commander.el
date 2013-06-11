@@ -62,6 +62,10 @@
   "\\(-[A-Za-z0-9-]\\|--[A-Za-z0-9][A-Za-z0-9-]+\\)"
   "Regex matching an option flag.")
 
+(defconst commander-command-re
+  "\\([A-Za-z0-9][A-Za-z0-9-]*\\)"
+  "Regex matching an command.")
+
 (defun commander--option (flags description function &optional default-value)
   (let (required optional zero-or-more one-or-more)
     (-map
@@ -95,14 +99,14 @@
 
 (defun commander--command (command description function &optional default-value)
   (let (required optional zero-or-more one-or-more)
-    (let ((matches (s-match "^\\([a-z]+\\) <\\(.+\\)>$" command)))
+    (let ((matches (s-match (concat "^" commander-command-re " " "<\\(.+\\)>" "$") command)))
       (when matches
         (setq command (nth 1 matches))
         (when (nth 2 matches)
           (setq required t)
           (if (equal (nth 2 matches) "*")
               (setq one-or-more t)))))
-    (let ((matches (s-match "^\\([a-z]+\\) \\[\\(.+\\)\\]$" command)))
+    (let ((matches (s-match (concat "^" commander-command-re " " "\\[\\(.+\\)\\]" "$") command)))
       (when matches
         (setq command (nth 1 matches))
         (when (nth 2 matches)

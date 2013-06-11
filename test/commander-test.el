@@ -293,4 +293,66 @@ OPTIONS:
 "
       (commander-usage))))))
 
+(ert-deftest test-commander-allow-options-with-special-characters ()
+  (with-mock
+
+   (mock (option/f) :times 1)
+   (mock (option/F) :times 1)
+   (mock (option/0) :times 1)
+   (mock (option/FOURTY-TWO) :times 1)
+   (mock (option/fourty-two) :times 1)
+   (mock (option/42) :times 1)
+
+   (commander
+    (option "-f" "..." 'option/f)
+    (option "-F" "..." 'option/F)
+    (option "-0" "..." 'option/0)
+    (option "--FOURTY-TWO" "..." 'option/FOURTY-TWO)
+    (option "--fourty-two" "..." 'option/fourty-two)
+    (option "--42" "..." 'option/42)
+
+    (parse '("-f" "-F" "-0" "--FOURTY-TWO" "--fourty-two" "--42")))))
+
+(ert-deftest test-commander-allow-command-with-single-lower-capital-letter ()
+  (with-mock
+   (mock (command/f) :times 1)
+   (commander
+    (command "f" "..." 'command/f)
+    (parse '("f")))))
+
+(ert-deftest test-commander-allow-command-with-single-upper-capital-letter ()
+  (with-mock
+   (mock (command/F) :times 1)
+   (commander
+    (command "F" "..." 'command/F)
+    (parse '("F")))))
+
+(ert-deftest test-commander-allow-command-with-single-digit-number ()
+  (with-mock
+   (mock (command/0) :times 1)
+   (commander
+    (command "0" "..." 'command/0)
+    (parse '("0")))))
+
+(ert-deftest test-commander-allow-command-with-multiple-digit-number ()
+  (with-mock
+   (mock (command/42) :times 1)
+   (commander
+    (command "42" "..." 'command/42)
+    (parse '("42")))))
+
+(ert-deftest test-commander-allow-command-with-upper-case-letters ()
+  (with-mock
+   (mock (command/FOURTY-TWO) :times 1)
+   (commander
+    (command "FOURTY-TWO" "..." 'command/FOURTY-TWO)
+    (parse '("FOURTY-TWO")))))
+
+(ert-deftest test-commander-allow-command-with-dash ()
+  (with-mock
+   (mock (command/fourty-two) :times 1)
+   (commander
+    (command "fourty-two" "..." 'command/fourty-two)
+    (parse '("fourty-two")))))
+
 (ert-run-tests-batch-and-exit)
