@@ -81,9 +81,11 @@
 (ert-deftest test-commander-required-argument-not-present-next-is-option ()
   (with-mock
    (mock (error "Option `%s` requires argument" "--help") :times 1)
+   (stub foo)
    (commander
-    (option "--help <command>" "COMMAND HELP" 'help)
-    (parse '("--help" "--command")))))
+    (option "--foo" "FOO" 'ignore)
+    (option "--help <foo>" "HELP" 'help)
+    (parse '("--help" "--foo")))))
 
 (ert-deftest test-commander-required-argument-not-present ()
   (with-mock
@@ -240,5 +242,23 @@
    (mock (error "Command `%s` not available" "foo"))
    (commander
     (parse '("foo")))))
+
+(ert-deftest test-commander-command-required-options-then-option-after ()
+  (with-mock
+   (mock (say "One" "Two" "Three") :times 1)
+   (mock (four) :times 1)
+   (commander
+    (option "--say <*>" "..." 'say)
+    (option "--four" "..." 'four)
+    (parse '("--say" "One" "Two" "Three" "--four")))))
+
+(ert-deftest test-commander-command-optional-options-then-option-after ()
+  (with-mock
+   (mock (say "One" "Two" "Three") :times 1)
+   (mock (four) :times 1)
+   (commander
+    (option "--say [*]" "..." 'say)
+    (option "--four" "..." 'four)
+    (parse '("--say" "One" "Two" "Three" "--four")))))
 
 (ert-run-tests-batch-and-exit)
