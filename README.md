@@ -96,7 +96,7 @@ command-line-args-left)` as value.
 
 ## Examples
 
-Create a new project, with optional dev mode.
+Create a new project, with optional dev mode:
 
     ;; emacs -Q -- create
     ;; emacs -Q -- create --dev
@@ -104,7 +104,7 @@ Create a new project, with optional dev mode.
      (command "create" "Create new project" 'create)
      (option "--dev" "Create in dev mode" 'dev-mode nil))
 
-Simple find task.
+Simple find task:
 
     ;; emacs -Q -- find
     ;; emacs -Q -- find path/to/dir --name 'foo.el' --type f
@@ -112,6 +112,26 @@ Simple find task.
      (command "find [path]" "Find stuff" 'find)
      (option "--name <path>" "Specify file name" 'name)
      (option "--type <type>" "Specify file type" 'name))
+
+Automatic usage information:
+
+    (commander
+     (command "find [path]" "Find stuff" 'find)
+     (command "help" "Show usage information" 'commander-print-usage)
+     (option "--name <path>" "Specify file name" 'name)
+     (option "--type <type>" "Specify file type" 'name))
+
+The command `emacs -Q -- help` will print:
+
+    USAGE: find COMMAND [OPTIONS]
+
+    COMMANDS:
+     help                Show usage information
+     find                Find stuff
+
+    OPTIONS:
+     --type              Specify file type
+     --name              Specify file name
 
 For more examples, check out: https://github.com/rejeep/commander.el/tree/master/examples
 
