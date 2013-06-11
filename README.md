@@ -102,7 +102,7 @@ Create a new project, with optional dev mode:
     ;; emacs -Q -- create --dev
     (commander
      (command "create" "Create new project" 'create)
-     (option "--dev" "Create in dev mode" 'dev-mode nil))
+     (option "--dev" "Create in dev mode" 'dev-mode))
 
 Simple find task:
 
