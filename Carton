@@ -7,6 +7,4 @@
 
 (development
  (depends-on "ert")
- (depends-on "el-mock")
- (depends-on "ecukes")
- (depends-on "espuds"))
+ (depends-on "el-mock"))

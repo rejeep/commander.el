@@ -1,15 +1,11 @@
 CARTON ?= carton
-ECUKES = $(shell find elpa/ecukes-*/bin/ecukes | tail -1)
 
-all: unit ecukes
+all: test
 
-ecukes: elpa
-	${CARTON} exec ${ECUKES} features
-
-unit: elpa
+test:
 	${CARTON} exec emacs -Q --script test/commander-test.el
 
 elpa:
 	${CARTON} install
 
-.PHONY:	all ecukes unit
+.PHONY:	all test
