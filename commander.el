@@ -140,43 +140,35 @@
         (if (s-matches? (concat "^" commander-option-re "$") argument)
             (let ((commander-option (commander--find-option argument)))
               (if commander-option
-                  (let ((function (commander-option-function commander-option))
-                        (default-value (commander-option-default-value commander-option))
-                        (required (commander-option-required commander-option))
-                        (optional (commander-option-optional commander-option))
-                        (zero-or-more (commander-option-zero-or-more commander-option))
-                        (one-or-more (commander-option-one-or-more commander-option)))
+                  (let* ((function (commander-option-function commander-option))
+                         (default-value (commander-option-default-value commander-option))
+                         (required (commander-option-required commander-option))
+                         (optional (commander-option-optional commander-option))
+                         (zero-or-more (commander-option-zero-or-more commander-option))
+                         (one-or-more (commander-option-one-or-more commander-option))
+                         (option-arguments
+                          (when (or required optional)
+                            (if (or (and required one-or-more) (and optional zero-or-more))
+                                (let ((next-arguments))
+                                  (while (and (nth (1+ i) arguments) (not (s-matches? commander-option-re (nth (1+ i) arguments))))
+                                    (setq i (1+ i))
+                                    (add-to-list 'next-arguments (nth i arguments) t))
+                                  next-arguments)
+                              (when (and (nth (1+ i) arguments) (not (s-matches? commander-option-re (nth (1+ i) arguments))))
+                                (setq i (1+ i))
+                                (nth i arguments))))))
                     (cond (required
-                           (let ((option-arguments
-                                  (if one-or-more
-                                      (let ((next-arguments))
-                                        (while (and (nth (1+ i) arguments) (not (s-matches? commander-option-re (nth (1+ i) arguments))))
-                                          (setq i (1+ i))
-                                          (add-to-list 'next-arguments (nth i arguments) t))
-                                        next-arguments)
-                                    (when (and (nth (1+ i) arguments) (not (s-matches? commander-option-re (nth (1+ i) arguments))))
-                                      (setq i (1+ i))
-                                      (nth i arguments)))))
-                             (if option-arguments
-                                 (if one-or-more
-                                     (apply function option-arguments)
-                                   (funcall function option-arguments))
+                           (if option-arguments
                                (if one-or-more
-                                   (error "Option `%s` requires at least one argument" argument)
-                                 (error "Option `%s` requires argument" argument)))))
+                                   (apply function option-arguments)
+                                 (funcall function option-arguments))
+                             (if one-or-more
+                                 (error "Option `%s` requires at least one argument" argument)
+                               (error "Option `%s` requires argument" argument))))
                           (optional
-                           (let ((option-arguments
-                                  (if zero-or-more
-                                      (let ((next-arguments))
-                                        (while (and (nth (1+ i) arguments) (not (s-matches? commander-option-re (nth (1+ i) arguments))))
-                                          (setq i (1+ i))
-                                          (add-to-list 'next-arguments (nth i arguments) t)))
-                                    (when (and (nth (1+ i) arguments) (not (s-matches? commander-option-re (nth (1+ i) arguments))))
-                                      (setq i (1+ i))
-                                      (nth i arguments)))))
-                             (if zero-or-more
-                                 (apply function option-arguments)
-                               (funcall function (or option-arguments default-value)))))
+                           (if zero-or-more
+                               (apply function option-arguments)
+                             (funcall function (or option-arguments default-value))))
                           (t (funcall function))))
                 (error "Option `%s` not available" argument)))
           (add-to-list 'rest argument t)))
