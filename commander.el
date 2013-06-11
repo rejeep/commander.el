@@ -57,6 +57,7 @@
 (defvar commander-options nil)
 (defvar commander-commands nil)
 (defvar commander-parsing-done nil)
+(defvar commander-name nil)
 
 (defconst commander-option-re
   "\\(-[A-Za-z0-9-]\\|--[A-Za-z0-9][A-Za-z0-9-]+\\)"
@@ -65,6 +66,9 @@
 (defconst commander-command-re
   "\\([A-Za-z0-9][A-Za-z0-9-]*\\)"
   "Regex matching an command.")
+
+(defun commander--name (name)
+  (setq commander-name name))
 
 (defun commander--option (flags description function &optional default-value)
   (let (required optional zero-or-more one-or-more)
@@ -219,7 +223,7 @@
 
 (defun commander-usage ()
   "Return usage information as a string."
-  (let ((binary (file-name-nondirectory load-file-name))
+  (let ((binary (or commander-name (file-name-nondirectory load-file-name)))
         (format-string "USAGE: %s COMMAND [OPTIONS]\n\nCOMMANDS:\n%s\n\nOPTIONS:\n%s\n")
         (commands
          (s-join "\n" (--map (commander--usage-command it) commander-commands)))
@@ -241,7 +245,10 @@
               (commander--command command description function default-value))
              (parse
               (arguments)
-              (commander--parse arguments)))
+              (commander--parse arguments))
+             (name
+              (name)
+              (commander--name name)))
      (setq commander-options nil)
      (setq commander-commands nil)
      (setq commander-parsing-done nil)

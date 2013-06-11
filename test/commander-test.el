@@ -289,6 +289,22 @@ OPTIONS:
 "
       (commander-usage))))))
 
+(ert-deftest test-commander-usage-with-custom-name ()
+  (with-mock
+   (commander
+    (name "foo")
+    (should
+     (equal
+      "USAGE: foo COMMAND [OPTIONS]
+
+COMMANDS:
+
+
+OPTIONS:
+
+"
+      (commander-usage))))))
+
 (ert-deftest test-commander-allow-options-with-special-characters ()
   (with-mock
 
