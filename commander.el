@@ -42,7 +42,8 @@
   required
   optional
   zero-or-more
-  one-or-more)
+  one-or-more
+  to-string)
 
 (defstruct commander-command
   command
@@ -52,7 +53,8 @@
   required
   optional
   zero-or-more
-  one-or-more)
+  one-or-more
+  to-string)
 
 (defstruct commander-default-command
   command
@@ -86,35 +88,37 @@
   (let (required optional zero-or-more one-or-more)
     (-map
      (lambda (flag)
-       (let ((matches (s-match (concat "^" commander-option-re " " "<\\(.+\\)>" "$") flag)))
-         (when matches
-           (setq flag (nth 1 matches))
-           (when (nth 2 matches)
-             (setq required t)
-             (if (equal (nth 2 matches) "*")
-                 (setq one-or-more t)))))
-       (let ((matches (s-match (concat "^" commander-option-re " " "\\[\\(.+\\)\\]" "$") flag)))
-         (when matches
-           (setq flag (nth 1 matches))
-           (when (nth 2 matches)
-             (setq optional t)
-             (if (equal (nth 2 matches) "*")
-                 (setq zero-or-more t)))))
-       (add-to-list
-        'commander-options
-        (make-commander-option
-         :flag flag
-         :description description
-         :function function
-         :default-value default-value
-         :required required
-         :optional optional
-         :zero-or-more zero-or-more
-         :one-or-more one-or-more)))
+       (let ((to-string flag))
+         (let ((matches (s-match (concat "^" commander-option-re " " "<\\(.+\\)>" "$") flag)))
+           (when matches
+             (setq flag (nth 1 matches))
+             (when (nth 2 matches)
+               (setq required t)
+               (if (equal (nth 2 matches) "*")
+                   (setq one-or-more t)))))
+         (let ((matches (s-match (concat "^" commander-option-re " " "\\[\\(.+\\)\\]" "$") flag)))
+           (when matches
+             (setq flag (nth 1 matches))
+             (when (nth 2 matches)
+               (setq optional t)
+               (if (equal (nth 2 matches) "*")
+                   (setq zero-or-more t)))))
+         (add-to-list
+          'commander-options
+          (make-commander-option
+           :flag flag
+           :description description
+           :function function
+           :default-value default-value
+           :required required
+           :optional optional
+           :zero-or-more zero-or-more
+           :one-or-more one-or-more
+           :to-string to-string))))
      (-map 's-trim (s-split "," flags)))))
 
 (defun commander--command (command description function &optional default-value)
-  (let (required optional zero-or-more one-or-more)
+  (let (required optional zero-or-more one-or-more (to-string command))
     (let ((matches (s-match (concat "^" commander-command-re " " "<\\(.+\\)>" "$") command)))
       (when matches
         (setq command (nth 1 matches))
@@ -139,7 +143,8 @@
       :required required
       :optional optional
       :zero-or-more zero-or-more
-      :one-or-more one-or-more))))
+      :one-or-more one-or-more
+      :to-string to-string))))
 
 (defun commander--find-option (option)
   (-first
@@ -229,14 +234,14 @@
   (setq commander-parsing-done t))
 
 (defun commander--usage-command (commander-command)
-  (let ((command (commander-command-command commander-command))
+  (let ((to-string (commander-command-to-string commander-command))
         (description (commander-command-description commander-command)))
-    (s-concat " " (s-pad-right 20 " " command) description)))
+    (s-concat " " (s-pad-right 20 " " to-string) description)))
 
 (defun commander--usage-option (commander-option)
-  (let ((flag (commander-option-flag commander-option))
+  (let ((to-string (commander-option-to-string commander-option))
         (description (commander-option-description commander-option)))
-    (s-concat " " (s-pad-right 20 " " flag) description)))
+    (s-concat " " (s-pad-right 20 " " to-string) description)))
 
 (defun commander-usage ()
   "Return usage information as a string."

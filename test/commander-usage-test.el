@@ -3,21 +3,20 @@
    (commander
     (option "--foo <bar>" "..." 'ignore)
     (option "--help" "..." 'ignore)
-    (command "baz" "..." 'ignore)
-    (command "qux" "..." 'ignore)
-    (parse '("--foo" "bar" "baz"))
-
+    (command "baz <qux>" "..." 'ignore)
+    (command "qux [*]" "..." 'ignore)
+    (parse '("--foo" "bar" "baz" "hax"))
     (should
      (equal
       "USAGE: commander-testrunner.el COMMAND [OPTIONS]
 
 COMMANDS:
- qux                 ...
- baz                 ...
+ qux [*]             ...
+ baz <qux>           ...
 
 OPTIONS:
  --help              ...
- --foo               ...
+ --foo <bar>         ...
 "
       (commander-usage))))))
 
