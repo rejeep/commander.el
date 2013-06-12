@@ -106,7 +106,8 @@ Specify name in usage information.
 
 Specify default command if no command is specified.
 
-    ;;  emacs -Q -- foo
+    ;;  emacs -Q -- show me
+    ;;  emacs -Q -- hide you
     ;;  emacs -Q
     (commander
      (default "show" "stuffing")
