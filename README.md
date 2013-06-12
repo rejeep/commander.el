@@ -11,6 +11,17 @@ I recommend installing via ELPA, but manual installation is simple as well:
 
 ## DSL
 
+### Overview
+
+* [commander](https://github.com/rejeep/commander.el#commander-rest-forms) `(&rest forms)`
+* [command](https://github.com/rejeep/commander.el#command-command-description-function-optional-default-value) `(command description function &optional default-value)`
+* [option](https://github.com/rejeep/commander.el#option-flags-description-function-optional-default-value) `(flags description function &optional default-value)`
+* [name](https://github.com/rejeep/commander.el#name-name) `(name)`
+* [default](https://github.com/rejeep/commander.el#default-command-rest-arguments) `(command &rest arguments)`
+* [parse](https://github.com/rejeep/commander.el#parse-arguments) `(arguments)`
+
+### Details
+
 #### commander `(&rest forms)`
 
 Define command/option schema within this block.
