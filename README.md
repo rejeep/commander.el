@@ -1,6 +1,6 @@
 # commander.el [![Build Status](https://api.travis-ci.org/rejeep/commander.el.png?branch=master)](http://travis-ci.org/rejeep/commander.el)
 
-Command line parsing for Emacs
+Command line parsing for Emacs.
 
 ## Installation
 
@@ -24,7 +24,7 @@ I recommend installing via ELPA, but manual installation is simple as well:
 
 #### commander `(&rest forms)`
 
-Define command/option schema within this block.
+Define schema within this block.
 
     (commander
      ;; schema here
@@ -32,87 +32,178 @@ Define command/option schema within this block.
 
 #### command `(command description function &optional default-value)`
 
-Define a command. Examples:
+Define a command.
+
+##### Example
+
+Define the command `foo` with no arguments.
 
     (commander
-     ;; no arguments
-     ;;  emacs -Q -- foo
-     (command "foo" "Foo" 'fn)
+     (command "foo" "Foo" 'fn))
 
-     ;; one required argument
-     ;;  emacs -Q -- foo bar
-     (command "foo <bar>" "Foo" 'fn)
+##### Usage
 
-     ;; one optional argument
-     ;;  emacs -Q -- foo
-     ;;  emacs -Q -- foo baz
-     (command "foo [bar]" "Foo" 'fn "bar")
+    $ emacs -Q -- foo
 
-     ;; one or more arguments
-     ;;  emacs -Q -- foo bar
-     ;;  emacs -Q -- foo bar baz qux
-     (command "foo <*>" "Foo" 'fn)
+##### Example
 
-     ;; zero or more arguments
-     ;;  emacs -Q -- foo
-     ;;  emacs -Q -- foo bar baz qux
-     (command "foo [*]" "Foo" 'fn)
-    )
+Define the command `foo` with a required argument.
+
+    (commander
+     (command "foo <bar>" "Foo" 'fn))
+
+##### Usage
+
+     $ emacs -Q -- foo bar
+
+##### Example
+
+Define the command `foo` with an optional argument. If argument is not
+specified, `"baz"` will be used as the argument value.
+
+    (commander
+     (command "foo [bar]" "Foo" 'fn "baz"))
+
+##### Usage
+
+     $ emacs -Q -- foo
+     $ emacs -Q -- foo qux
+
+##### Example
+
+Define the command `foo` with at least one required argument.
+
+    (commander
+     (command "foo <*>" "Foo" 'fn))
+
+##### Usage
+
+     $ emacs -Q -- foo bar
+     $ emacs -Q -- foo bar baz qux
+
+##### Example
+
+Define the command `foo` with zero or more arguments.
+
+    (commander
+     (command "foo [*]" "Foo" 'fn))
+
+##### Usage
+
+     $ emacs -Q -- foo
+     $ emacs -Q -- foo bar baz qux
 
 #### option `(flags description function &optional default-value)`
 
-Define an option. Examples:
+Define an option.
+
+##### Example
+
+Define the option `--foo` with no arguments.
 
     (commander
-     ;; no arguments
-     ;;  emacs -Q -- --foo
-     (option "--foo" "Foo" 'fn)
+     (option "--foo" "Foo" 'fn))
 
-     ;; one required argument
-     ;;  emacs -Q -- --foo bar
-     (command "--foo <bar>" "Foo" 'fn)
+##### Usage
 
-     ;; one optional argument
-     ;;  emacs -Q -- --foo
-     ;;  emacs -Q -- --foo baz
-     (command "--foo [bar]" "Foo" 'fn "bar")
+    $ emacs -Q -- --foo
 
-     ;; one or more arguments
-     ;;  emacs -Q -- --foo bar
-     ;;  emacs -Q -- --foo bar baz qux
-     (command "--foo <*>" "Foo" 'fn)
+##### Example
 
-     ;; zero or more arguments
-     ;;  emacs -Q -- --foo
-     ;;  emacs -Q -- --foo bar baz qux
-     (command "--foo [*]" "Foo" 'fn)
+Define the option `--foo` with a required argument.
 
-     ;; option alias
-     ;;  emacs -Q -- --foo
-     ;;  emacs -Q -- -f
-     (option "--foo, -f" "Foo" 'fn)
-    )
+    (commander
+     (command "--foo <bar>" "Foo" 'fn))
+
+##### Usage
+
+    $ emacs -Q -- --foo bar
+
+##### Example
+
+Define the option `--foo` with an optional argument. If argument is not
+specified, `"baz"` will be used as the argument value.
+
+    (commander
+     (command "--foo [bar]" "Foo" 'fn "baz"))
+
+##### Usage
+
+    $ emacs -Q -- --foo
+    $ emacs -Q -- --foo qux
+
+##### Example
+
+Define the option `--foo` with at least one required argument.
+
+    (commander
+     (command "--foo <*>" "Foo" 'fn))
+
+##### Usage
+
+    $ emacs -Q -- --foo bar
+    $ emacs -Q -- --foo bar baz qux
+
+##### Example
+
+Define the option `--foo` with zero or more arguments.
+
+    (commander
+     (command "--foo [*]" "Foo" 'fn))
+
+##### Usage
+
+    $ emacs -Q -- --foo
+    $ emacs -Q -- --foo bar baz qux
+
+##### Example
+
+Define the option `--foo` with with an alias `-f`.
+
+    (commander
+     (option "--foo, -f" "Foo" 'fn))
+
+##### Usage
+
+    $ emacs -Q -- --foo
+    $ emacs -Q -- -f
 
 #### name `(name)`
 
 Specify name in usage information.
 
-    ;;  emacs -Q -- --help
+##### Example
+
+Define the option `--help` that prints usage information with
+`my-awesome-program` as program name.
+
     (commander
      (name "my-awesome-program")
      (option "--help" "Show usage information" 'commander-print-usage))
+
+##### Usage
+
+    $ emacs -Q -- --help
 
 #### default `(command &rest arguments)`
 
 Specify default command if no command is specified.
 
-    ;;  emacs -Q -- show me
-    ;;  emacs -Q -- hide you
-    ;;  emacs -Q
+##### Example
+
+Define two commands `show` and `hide` and make `show` the default with
+`everyone` as argument.
+
     (commander
-     (default "show" "stuffing")
+     (default "show" "everyone")
      (command "show <stuff>" "Show stuff" 'show)
      (command "hide <stuff>" "Hide stuff" 'hide))
+
+##### Usage
+
+    $ emacs -Q -- show me
+    $ emacs -Q -- hide you
+    $ emacs -Q
 
 #### parse `(arguments)`
 
@@ -134,7 +225,7 @@ Create a new project, with optional dev mode:
     ;; emacs -Q -- create --dev
     (commander
      (command "create" "Create new project" 'create)
-     (option "--dev" "Create in dev mode" 'dev-mode))
+     (option "--dev" "Run command in dev mode" 'dev-mode))
 
 Simple find task:
 
