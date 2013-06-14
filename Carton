@@ -1,6 +1,6 @@
 (source "melpa" "http://melpa.milkbox.net/packages/")
 
-(package "commander" "0.0.1" "TODO")
+(package-file "commander.el")
 
 (depends-on "s" "1.6.0")
 (depends-on "dash" "1.3.2")
