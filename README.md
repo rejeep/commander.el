@@ -93,6 +93,37 @@ Define the command `foo` with zero or more arguments.
      $ emacs -Q -- foo
      $ emacs -Q -- foo bar baz qux
 
+##### Example
+
+Define the greedy command `foo`.
+
+    (commander
+     (option "--qux" "Qux" 'fn)
+     (command "foo [*]" "Foo" 'fn :greedy t))
+
+##### Usage
+
+     $ emacs -Q -- foo
+     $ emacs -Q -- foo --bar baz
+     $ emacs -Q -- --qux --foo --bar baz
+
+##### Usage
+
+     $ emacs -Q -- foo
+     $ emacs -Q -- foo bar baz qux
+
+##### Example
+
+Define the greedy command `foo` with default arguments.
+
+    (commander
+     (command "foo [*]" "Foo" 'fn "bar" "baz" :greedy t))
+
+##### Usage
+
+     $ emacs -Q -- foo
+     $ emacs -Q -- foo --bar baz
+
 #### option `(flags description function &optional default-value)`
 
 Define an option.

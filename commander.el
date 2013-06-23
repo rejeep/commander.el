@@ -39,7 +39,7 @@
   flag
   description
   function
-  default-value
+  default-values
   required
   optional
   zero-or-more
@@ -50,7 +50,8 @@
   command
   description
   function
-  default-value
+  default-values
+  greedy
   required
   optional
   zero-or-more
@@ -85,7 +86,7 @@
 (defun commander--name (name)
   (setq commander-name name))
 
-(defun commander--option (flags description function &optional default-value)
+(defun commander--option (flags description function default-values)
   (let (required optional zero-or-more one-or-more)
     (-map
      (lambda (flag)
@@ -110,7 +111,7 @@
            :flag flag
            :description description
            :function function
-           :default-value default-value
+           :default-values default-values
            :required required
            :optional optional
            :zero-or-more zero-or-more
@@ -118,8 +119,15 @@
            :to-string to-string))))
      (-map 's-trim (s-split "," flags)))))
 
-(defun commander--command (command description function &optional default-value)
-  (let (required optional zero-or-more one-or-more (to-string command))
+(defun commander--command (command description function args)
+  (let* (required
+        optional
+        zero-or-more
+        one-or-more
+        (to-string command)
+        (default-values (-take-while 'stringp args))
+        (options (-drop (length default-values) args))
+        (greedy (plist-get options :greedy)))
     (let ((matches (s-match (concat "^" commander-command-re " " "<\\(.+\\)>" "$") command)))
       (when matches
         (setq command (nth 1 matches))
@@ -140,7 +148,8 @@
       :command command
       :description description
       :function function
-      :default-value default-value
+      :default-values default-values
+      :greedy greedy
       :required required
       :optional optional
       :zero-or-more zero-or-more
@@ -167,7 +176,7 @@
             (let ((commander-option (commander--find-option argument)))
               (if commander-option
                   (let* ((function (commander-option-function commander-option))
-                         (default-value (commander-option-default-value commander-option))
+                         (default-values (commander-option-default-values commander-option))
                          (required (commander-option-required commander-option))
                          (optional (commander-option-optional commander-option))
                          (zero-or-more (commander-option-zero-or-more commander-option))
@@ -193,8 +202,10 @@
                                (error "Option `%s` requires argument" argument))))
                           (optional
                            (if zero-or-more
-                               (apply function option-arguments)
-                             (funcall function (or option-arguments default-value))))
+                               (apply function (or option-arguments default-values))
+                             (if option-arguments
+                                 (funcall function option-arguments)
+                               (apply function default-values))))
                           (t (funcall function))))
                 (error "Option `%s` not available" argument)))
           (add-to-list 'rest argument t)))
@@ -207,11 +218,13 @@
          (commander-command (commander--find-command command)))
     (if commander-command
         (let ((function (commander-command-function commander-command))
-              (default-value (commander-command-default-value commander-command))
+              (default-values (commander-command-default-values commander-command))
               (required (commander-command-required commander-command))
               (optional (commander-command-optional commander-command))
               (zero-or-more (commander-command-zero-or-more commander-command))
               (one-or-more (commander-command-one-or-more commander-command)))
+          (unless rest
+            (setq rest default-values))
           (cond (required
                  (if rest
                      (apply function rest)
@@ -224,15 +237,41 @@
                  (funcall function))))
       (error "Command `%s` not available" command))))
 
+(defun commander--find-greedy (arguments)
+  (-first
+   (lambda (commander-command)
+     (-any?
+      (lambda (argument)
+        (and
+         (commander-command-greedy commander-command)
+         (equal (commander-command-command commander-command) argument)))
+      arguments))
+   commander-commands))
+
 (defun commander--parse (arguments)
-  (let ((rest (commander--handle-options arguments)))
-    (unless rest
-      (if commander-default-command
-          (let ((command (commander-default-command-command commander-default-command))
-                (arguments (commander-default-command-arguments commander-default-command)))
-            (setq rest (cons command arguments)))))
-    (when rest (commander--handle-command rest)))
-  (setq commander-parsing-done t))
+  (let ((greedy-command
+         (commander--find-greedy arguments)))
+    (cond (greedy-command
+           (let ((before-options))
+             (-each-while
+              arguments
+              (lambda (argument)
+                (not (equal argument (commander-command-command greedy-command))))
+              (lambda (argument)
+                (add-to-list 'before-options argument t)))
+             (when before-options
+               (commander--handle-options before-options))
+             (let ((rest (-drop (length before-options) arguments)))
+               (when rest (commander--handle-command rest)))))
+          (t
+           (let ((rest (commander--handle-options arguments)))
+             (unless rest
+               (if commander-default-command
+                   (let ((command (commander-default-command-command commander-default-command))
+                         (arguments (commander-default-command-arguments commander-default-command)))
+                     (setq rest (cons command arguments)))))
+             (when rest (commander--handle-command rest)))))
+    (setq commander-parsing-done t)))
 
 (defun commander--usage-command (commander-command)
   (let ((to-string (commander-command-to-string commander-command))
@@ -261,11 +300,11 @@
 (defmacro commander (&rest forms)
   "Specify option/command schema."
   `(cl-flet ((option
-              (flags description function &optional default-value)
-              (commander--option flags description function default-value))
+              (flags description function &rest default-values)
+              (commander--option flags description function default-values))
              (command
-              (command description function &optional default-value)
-              (commander--command command description function default-value))
+              (command description function &rest args)
+              (commander--command command description function args))
              (parse
               (arguments)
               (commander--parse arguments))

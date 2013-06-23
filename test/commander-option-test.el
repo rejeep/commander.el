@@ -111,6 +111,13 @@
     (option "--help [command]" "COMMAND HELP" 'help "all")
     (parse '("--help")))))
 
+(ert-deftest test-commander-option-optional-arguments-not-present-with-default-values ()
+  (with-mock
+   (mock (help "me" "clean") :times 1)
+   (commander
+    (option "--help [*]" "COMMAND HELP" 'help "me" "clean")
+    (parse '("--help")))))
+
 (ert-deftest test-commander-option-zero-or-more-no-arguments ()
   (with-mock
    (mock (help) :times 1)

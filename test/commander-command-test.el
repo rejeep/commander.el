@@ -54,6 +54,13 @@
     (command "help [command]" "HELP" 'help "show")
     (parse '("help")))))
 
+(ert-deftest test-commander-command-optional-arguments-not-present-with-default-values ()
+  (with-mock
+   (mock (help "show" "me") :times 1)
+     (commander
+      (command "help [*]" "HELP" 'help "show" "me")
+      (parse '("help")))))
+
 (ert-deftest test-commander-command-zero-or-more-no-arguments ()
   (with-mock
    (mock (help) :times 1)
@@ -174,3 +181,34 @@
     (command "foo [*]" "..." 'foo)
     (command "bar" "..." 'bar)
     (parse nil))))
+
+(ert-deftest test-commander-command-greedy ()
+  (with-mock
+   (mock (foo "baz" "--bar" "qux") :times 1)
+   (not-called bar)
+   (commander
+    (command "foo [*]" "..." 'foo :greedy t)
+    (option "--bar" "..." 'bar)
+    (parse '("foo" "baz" "--bar" "qux")))))
+
+(ert-deftest test-commander-command-greedy-option-before ()
+  (with-mock
+   (mock (foo "baz" "--bar" "qux") :times 1)
+   (mock (before) :times 1)
+   (not-called bar)
+   (commander
+    (command "foo [*]" "..." 'foo :greedy t)
+    (option "--bar" "..." 'bar)
+    (option "--before" "..." 'before)
+    (parse '("--before" "foo" "baz" "--bar" "qux")))))
+
+(ert-deftest test-commander-command-greedy-option-with-default-values ()
+  (with-mock
+   (mock (foo "--bar" "baz") :times 1)
+   (mock (yoo) :times 1)
+   (mock (hey "arg") :times 1)
+   (commander
+    (command "foo [*]" "..." 'foo "--bar" "baz" :greedy t)
+    (option "--yoo" "..." 'yoo)
+    (option "--hey" "..." 'hey)
+    (parse '("--hey" "arg" "--yoo" "foo")))))
