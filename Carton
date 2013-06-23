@@ -3,5 +3,4 @@
 (package-file "commander.el")
 
 (development
- (depends-on "ert")
  (depends-on "el-mock"))

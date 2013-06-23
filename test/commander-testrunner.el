@@ -1,8 +1,10 @@
 (let ((current-directory (file-name-directory load-file-name)))
-  (setq commander-test-path (expand-file-name "." current-directory))
-  (setq commander-root-path (expand-file-name ".." current-directory)))
+  (setq commander-root-path (expand-file-name ".." current-directory))
+  (setq commander-test-path (expand-file-name "test" commander-root-path))
+  (setq commander-vendor-path (expand-file-name "vendor" commander-root-path)))
 
-(require 'ert)
+(unless (require 'ert nil t)
+  (require 'ert (expand-file-name "ert" commander-vendor-path)))
 (require 'el-mock)
 (require 'commander (expand-file-name "commander.el" commander-root-path))
 
