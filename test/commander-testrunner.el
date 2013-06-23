@@ -6,7 +6,16 @@
 (require 'el-mock)
 (require 'commander (expand-file-name "commander.el" commander-root-path))
 
-(dolist (test-file (or argv (directory-files (expand-file-name commander-test-path) t "-test.el$")))
-  (load test-file nil t))
+(let ((test-files
+       (or
+        (mapcar
+         (lambda (test-file)
+           (expand-file-name test-file commander-root-path))
+         (cdr argv))
+        (directory-files (expand-file-name commander-test-path) t "-test.el$"))))
+  (mapc
+   (lambda (test-file)
+     (load test-file nil t))
+   test-files))
 
 (ert-run-tests-batch-and-exit t)
