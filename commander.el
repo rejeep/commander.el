@@ -121,13 +121,13 @@
 
 (defun commander--command (command description function args)
   (let* (required
-        optional
-        zero-or-more
-        one-or-more
-        (to-string command)
-        (default-values (-take-while 'stringp args))
-        (options (-drop (length default-values) args))
-        (greedy (plist-get options :greedy)))
+         optional
+         zero-or-more
+         one-or-more
+         (to-string command)
+         (default-values (-take-while 'stringp args))
+         (options (-drop (length default-values) args))
+         (greedy (plist-get options :greedy)))
     (let ((matches (s-match (concat "^" commander-command-re " " "<\\(.+\\)>" "$") command)))
       (when matches
         (setq command (nth 1 matches))
