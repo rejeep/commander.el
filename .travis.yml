@@ -17,5 +17,6 @@ before_install:
   - carton
 env:
   - EMACS=emacs24
+  - EMACS=emacs
 script:
   make
