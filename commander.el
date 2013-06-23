@@ -297,23 +297,29 @@
   "Print usage information."
   (message (commander-usage)))
 
+(defmacro commander--flet (specs &rest body)
+  (declare (indent 1) (debug t))
+  (let ((flet (if (fboundp 'cl-flet) 'cl-flet 'flet)))
+    `(,flet ,specs ,@body)))
+
 (defmacro commander (&rest forms)
   "Specify option/command schema."
-  `(cl-flet ((option
-              (flags description function &rest default-values)
-              (commander--option flags description function default-values))
-             (command
-              (command description function &rest args)
-              (commander--command command description function args))
-             (parse
-              (arguments)
-              (commander--parse arguments))
-             (name
-              (name)
-              (commander--name name))
-             (default
-               (command &rest arguments)
-               (commander--default command arguments)))
+  `(commander--flet
+       ((option
+         (flags description function &rest default-values)
+         (commander--option flags description function default-values))
+        (command
+         (command description function &rest args)
+         (commander--command command description function args))
+        (parse
+         (arguments)
+         (commander--parse arguments))
+        (name
+         (name)
+         (commander--name name))
+        (default
+          (command &rest arguments)
+          (commander--default command arguments)))
      (setq commander-options nil)
      (setq commander-commands nil)
      (setq commander-default-command nil)
