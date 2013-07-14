@@ -6,3 +6,12 @@
     (option "--foo <bar>" "..." 'foo)
     (command "baz" "..." 'baz)
     (parse '("--foo" "bar" "baz")))))
+
+(ert-deftest test-commander-skank ()
+  (with-mock
+   (mock (load "test/foo-bar.el") :times 1)
+   (mock (run) :times 1)
+   (commander
+    (option "--load <*>" "..." 'load)
+    (command "run [*]" "..." 'run)
+    (parse '("run" "--load" "test/foo-bar.el")))))
