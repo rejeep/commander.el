@@ -14,8 +14,8 @@ I recommend installing via ELPA, but manual installation is simple as well:
 ### Overview
 
 * [commander](https://github.com/rejeep/commander.el#commander-rest-forms) `(&rest forms)`
-* [command](https://github.com/rejeep/commander.el#command-command-description-function-optional-default-value) `(command description function &optional default-value)`
-* [option](https://github.com/rejeep/commander.el#option-flags-description-function-optional-default-value) `(flags description function &optional default-value)`
+* [command](https://github.com/rejeep/commander.el#command-command-description-function-rest-default-values) `(command description function &rest default-values)`
+* [option](https://github.com/rejeep/commander.el#option-flags-description-function-rest-default-values) `(flags description function &rest default-values)`
 * [name](https://github.com/rejeep/commander.el#name-name) `(name)`
 * [default](https://github.com/rejeep/commander.el#default-command-rest-arguments) `(command &rest arguments)`
 * [parse](https://github.com/rejeep/commander.el#parse-arguments) `(arguments)`
@@ -30,7 +30,7 @@ Define schema within this block.
      ;; schema here
      )
 
-#### command `(command description function &optional default-value)`
+#### command `(command description function &rest default-values)`
 
 Define a command.
 
@@ -93,7 +93,7 @@ Define the command `foo` with zero or more arguments.
      $ emacs -Q -- foo
      $ emacs -Q -- foo bar baz qux
 
-#### option `(flags description function &optional default-value)`
+#### option `(flags description function &rest default-values)`
 
 Define an option.
 
