@@ -7,7 +7,7 @@
     (command "baz" "..." 'baz)
     (parse '("--foo" "bar" "baz")))))
 
-(ert-deftest test-commander-skank ()
+(ert-deftest test-commander-argument-kind-of-looking-like-argument ()
   (with-mock
    (mock (load "test/foo-bar.el") :times 1)
    (mock (run) :times 1)
