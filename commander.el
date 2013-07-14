@@ -125,9 +125,7 @@
          zero-or-more
          one-or-more
          (to-string command)
-         (default-values (-take-while 'stringp args))
-         (options (-drop (length default-values) args))
-         (greedy (plist-get options :greedy)))
+         (default-values (-take-while 'stringp args)))
     (let ((matches (s-match (concat "^" commander-command-re " " "<\\(.+\\)>" "$") command)))
       (when matches
         (setq command (nth 1 matches))
@@ -149,7 +147,6 @@
       :description description
       :function function
       :default-values default-values
-      :greedy greedy
       :required required
       :optional optional
       :zero-or-more zero-or-more
@@ -249,29 +246,14 @@
    commander-commands))
 
 (defun commander--parse (arguments)
-  (let ((greedy-command
-         (commander--find-greedy arguments)))
-    (cond (greedy-command
-           (let ((before-options))
-             (-each-while
-              arguments
-              (lambda (argument)
-                (not (equal argument (commander-command-command greedy-command))))
-              (lambda (argument)
-                (add-to-list 'before-options argument t)))
-             (when before-options
-               (commander--handle-options before-options))
-             (let ((rest (-drop (length before-options) arguments)))
-               (when rest (commander--handle-command rest)))))
-          (t
-           (let ((rest (commander--handle-options arguments)))
-             (unless rest
-               (if commander-default-command
-                   (let ((command (commander-default-command-command commander-default-command))
-                         (arguments (commander-default-command-arguments commander-default-command)))
-                     (setq rest (cons command arguments)))))
-             (when rest (commander--handle-command rest)))))
-    (setq commander-parsing-done t)))
+  (let ((rest (commander--handle-options arguments)))
+    (unless rest
+      (if commander-default-command
+          (let ((command (commander-default-command-command commander-default-command))
+                (arguments (commander-default-command-arguments commander-default-command)))
+            (setq rest (cons command arguments)))))
+    (when rest (commander--handle-command rest)))
+  (setq commander-parsing-done t))
 
 (defun commander--usage-command (commander-command)
   (let ((to-string (commander-command-to-string commander-command))
@@ -305,28 +287,28 @@
 (defmacro commander (&rest forms)
   "Specify option/command schema."
   `(commander--flet
-       ((option
-         (flags description function &rest default-values)
-         (commander--option flags description function default-values))
-        (command
-         (command description function &rest args)
-         (commander--command command description function args))
-        (parse
-         (arguments)
-         (commander--parse arguments))
-        (name
-         (name)
-         (commander--name name))
-        (default
-          (command &rest arguments)
-          (commander--default command arguments)))
-     (setq commander-options nil)
-     (setq commander-commands nil)
-     (setq commander-default-command nil)
-     (setq commander-parsing-done nil)
-     ,@forms
-     (unless commander-parsing-done
-       (commander--parse (cdr command-line-args-left)))))
+    ((option
+      (flags description function &rest default-values)
+      (commander--option flags description function default-values))
+     (command
+      (command description function &rest args)
+      (commander--command command description function args))
+     (parse
+      (arguments)
+      (commander--parse arguments))
+     (name
+      (name)
+      (commander--name name))
+     (default
+       (command &rest arguments)
+       (commander--default command arguments)))
+    (setq commander-options nil)
+    (setq commander-commands nil)
+    (setq commander-default-command nil)
+    (setq commander-parsing-done nil)
+    ,@forms
+    (unless commander-parsing-done
+      (commander--parse (cdr command-line-args-left)))))
 
 (provide 'commander)
 
