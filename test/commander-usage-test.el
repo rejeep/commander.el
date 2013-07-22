@@ -8,7 +8,7 @@
     (parse nil)
     (should
      (equal
-      "USAGE: commander-testrunner.el COMMAND [OPTIONS]
+      "USAGE: ert-runner COMMAND [OPTIONS]
 
 COMMANDS:
  qux [*]             ...
