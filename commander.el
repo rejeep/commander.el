@@ -30,8 +30,7 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'cl))
+(require 'cl) ;; no eval-when-compile since commander--flet breaks
 (require 's)
 (require 'dash)
 
