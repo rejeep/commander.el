@@ -12,6 +12,6 @@
   (message "Sum is: %d" (apply '+ (mapcar 'string-to-int args))))
 
 (commander
- (option "--say <*>" "..." 'say)
- (option "--four" "..." 'four)
- (command "sum [args]" "..." 'sum 0))
+ (option "--say <*>" "..." say)
+ (option "--four" "..." four)
+ (command "sum [args]" "..." sum 0))

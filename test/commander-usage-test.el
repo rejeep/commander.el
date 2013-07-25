@@ -1,11 +1,11 @@
 (ert-deftest test-commander-usage-information ()
   (with-mock
    (commander
-    (option "--foo <bar>" "..." 'ignore)
-    (option "--help" "..." 'ignore)
-    (command "baz <qux>" "..." 'ignore)
-    (command "qux [*]" "..." 'ignore)
-    (parse '("--foo" "bar" "baz" "hax"))
+    (option "--foo <bar>" "..." ignore)
+    (option "--help" "..." ignore)
+    (command "baz <qux>" "..." ignore)
+    (command "qux [*]" "..." ignore)
+    (parse nil)
     (should
      (equal
       "USAGE: commander-testrunner.el COMMAND [OPTIONS]
@@ -24,6 +24,7 @@ OPTIONS:
   (with-mock
    (commander
     (name "foo")
+    (parse nil)
     (should
      (equal
       "USAGE: foo COMMAND [OPTIONS]
