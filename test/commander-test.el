@@ -1,4 +1,4 @@
-(ert-deftest test-commander-not-greedy-when-single-required-argument ()
+(ert-deftest commander-test/not-greedy-when-single-required-argument ()
   (with-mock
    (mock (foo "bar") :times 1)
    (mock (baz) :times 1)
@@ -7,7 +7,7 @@
     (command "baz" "..." baz)
     (parse ("--foo" "bar" "baz")))))
 
-(ert-deftest test-commander-argument-kind-of-looking-like-argument ()
+(ert-deftest commander-test/argument-kind-of-looking-like-argument ()
   (with-mock
    (mock (cat "test/foo-bar.el") :times 1)
    (mock (run) :times 1)
@@ -16,7 +16,7 @@
     (command "run [*]" "..." run)
     (parse ("run" "--cat" "test/foo-bar.el")))))
 
-(ert-deftest test-commander-not-calling-parse ()
+(ert-deftest commander-test/not-calling-parse ()
   (with-mock
    (let ((command-line-args-left '("--" "--help")))
      (mock (help) :times 1)

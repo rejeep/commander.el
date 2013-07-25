@@ -1,4 +1,4 @@
-(ert-deftest test-commander-usage-information ()
+(ert-deftest commander-test-usage/information ()
   (with-mock
    (commander
     (option "--foo <bar>" "..." ignore)
@@ -20,7 +20,7 @@ OPTIONS:
 "
       (commander-usage))))))
 
-(ert-deftest test-commander-usage-with-custom-name ()
+(ert-deftest commander-test-usage/with-custom-name ()
   (with-mock
    (commander
     (name "foo")
