@@ -1,10 +1,10 @@
 ;; carton exec emacs --script examples/custom-argv.el
 
-(require 'commander (expand-file-name "commander.el" default-directory))
+(require 'commander (expand-file-name "commander" default-directory))
 
 (defun foo ()
   (message "FOO"))
 
 (commander
- (option "--foo" "..." 'foo)
- (parse '("--foo")))
+ (option "--foo" "..." foo)
+ (parse ("--foo")))

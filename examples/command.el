@@ -1,6 +1,6 @@
 ;; carton exec emacs --script examples/command.el -- sum 1 2 3 4 5 --say One Two Three --four
 
-(require 'commander (expand-file-name "commander.el" default-directory))
+(require 'commander (expand-file-name "commander" default-directory))
 
 (defun say (&rest args)
   (message "Saying: %s" (mapconcat 'identity args " ")))
