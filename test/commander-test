@@ -1,3 +1,0 @@
-#!/bin/sh
-
-"${CARTON:-carton}" exec "${EMACS:-emacs}" -Q --script "$(dirname $0)/commander-testrunner.el" -- "$@"

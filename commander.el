@@ -30,8 +30,7 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'cl))
+(eval-when-compile (require 'cl))
 (require 's)
 (require 'dash)
 
@@ -64,7 +63,6 @@
 
 (defvar commander-options nil)
 (defvar commander-commands nil)
-(defvar commander-parsing-done nil)
 (defvar commander-name nil)
 (defvar commander-default-command nil)
 
@@ -252,8 +250,7 @@
           (let ((command (commander-default-command-command commander-default-command))
                 (arguments (commander-default-command-arguments commander-default-command)))
             (setq rest (cons command arguments)))))
-    (when rest (commander--handle-command rest)))
-  (setq commander-parsing-done t))
+    (when rest (commander--handle-command rest))))
 
 (defun commander--usage-command (commander-command)
   (let ((to-string (commander-command-to-string commander-command))
@@ -279,34 +276,31 @@
   "Print usage information."
   (message (commander-usage)))
 
-(defmacro commander--flet (specs &rest body)
-  (declare (indent 1) (debug t))
-  (let ((flet (if (fboundp 'cl-flet) 'cl-flet 'flet)))
-    `(,flet ,specs ,@body)))
-
 (defmacro commander (&rest forms)
-  "Specify option/command schema."
-  `(commander--flet
-    ((option
-      (flags description function &rest default-values)
-      (commander--option flags description function default-values))
-     (command
-      (command description function &rest args)
-      (commander--command command description function args))
-     (parse
-      (arguments)
-      (commander--parse arguments))
-     (name
-      (name)
-      (commander--name name))
-     (default
-       (command &rest arguments)
-       (commander--default command arguments)))
-    (setq commander-options nil)
-    (setq commander-commands nil)
-    (setq commander-default-command nil)
-    (setq commander-parsing-done nil)
-    ,@forms
+  `(let (commander-options
+        commander-commands
+        commander-default-command
+        commander-parsing-done)
+    (-each
+     ',forms
+     (lambda (form)
+       (case (car form)
+         (option
+          (destructuring-bind (_ flags description function &rest default-values) form
+            (commander--option flags description function default-values)))
+         (command
+          (destructuring-bind (_ command description function &rest args) form
+            (commander--command command description function args)))
+         (parse
+          (destructuring-bind (_ arguments) form
+            (commander--parse arguments)
+            (setq commander-parsing-done t)))
+         (name
+          (destructuring-bind (_ name) form
+            (commander--name name)))
+         (default
+           (destructuring-bind (_ command &rest arguments) form
+             (commander--default command arguments))))))
     (unless commander-parsing-done
       (commander--parse (cdr command-line-args-left)))))
 
