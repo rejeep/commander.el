@@ -7,7 +7,7 @@
 ;; Version: 0.1.2
 ;; Keywords: cli, argv
 ;; URL: http://github.com/rejeep/commander.el
-;; Package-Requires: ((s "1.6.0") (dash "1.3.2"))
+;; Package-Requires: ((s "1.6.0") (dash "1.3.2") (cl-lib "0.3"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -30,11 +30,11 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 (require 's)
 (require 'dash)
 
-(defstruct commander-option
+(cl-defstruct commander-option
   flag
   description
   function
@@ -45,7 +45,7 @@
   one-or-more
   to-string)
 
-(defstruct commander-command
+(cl-defstruct commander-command
   command
   description
   function
@@ -57,7 +57,7 @@
   one-or-more
   to-string)
 
-(defstruct commander-default-command
+(cl-defstruct commander-default-command
   command
   arguments)
 
@@ -284,22 +284,22 @@
     (-each
      ',forms
      (lambda (form)
-       (case (car form)
+       (cl-case (car form)
          (option
-          (destructuring-bind (_ flags description function &rest default-values) form
+          (cl-destructuring-bind (_ flags description function &rest default-values) form
             (commander--option flags description function default-values)))
          (command
-          (destructuring-bind (_ command description function &rest args) form
+          (cl-destructuring-bind (_ command description function &rest args) form
             (commander--command command description function args)))
          (parse
-          (destructuring-bind (_ arguments) form
+          (cl-destructuring-bind (_ arguments) form
             (commander--parse arguments)
             (setq commander-parsing-done t)))
          (name
-          (destructuring-bind (_ name) form
+          (cl-destructuring-bind (_ name) form
             (commander--name name)))
          (default
-           (destructuring-bind (_ command &rest arguments) form
+           (cl-destructuring-bind (_ command &rest arguments) form
              (commander--default command arguments))))))
     (unless commander-parsing-done
       (commander--parse (cdr command-line-args-left)))))
