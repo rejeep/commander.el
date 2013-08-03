@@ -39,7 +39,7 @@ Define a command.
 Define the command `foo` with no arguments.
 
     (commander
-     (command "foo" "Foo" 'fn))
+     (command "foo" "Foo" fn))
 
 ##### Usage
 
@@ -50,7 +50,7 @@ Define the command `foo` with no arguments.
 Define the command `foo` with a required argument.
 
     (commander
-     (command "foo <bar>" "Foo" 'fn))
+     (command "foo <bar>" "Foo" fn))
 
 ##### Usage
 
@@ -62,7 +62,7 @@ Define the command `foo` with an optional argument. If argument is not
 specified, `"baz"` will be used as the argument value.
 
     (commander
-     (command "foo [bar]" "Foo" 'fn "baz"))
+     (command "foo [bar]" "Foo" fn "baz"))
 
 ##### Usage
 
@@ -74,7 +74,7 @@ specified, `"baz"` will be used as the argument value.
 Define the command `foo` with at least one required argument.
 
     (commander
-     (command "foo <*>" "Foo" 'fn))
+     (command "foo <*>" "Foo" fn))
 
 ##### Usage
 
@@ -86,7 +86,7 @@ Define the command `foo` with at least one required argument.
 Define the command `foo` with zero or more arguments.
 
     (commander
-     (command "foo [*]" "Foo" 'fn))
+     (command "foo [*]" "Foo" fn))
 
 ##### Usage
 
@@ -102,7 +102,7 @@ Define an option.
 Define the option `--foo` with no arguments.
 
     (commander
-     (option "--foo" "Foo" 'fn))
+     (option "--foo" "Foo" fn))
 
 ##### Usage
 
@@ -113,7 +113,7 @@ Define the option `--foo` with no arguments.
 Define the option `--foo` with a required argument.
 
     (commander
-     (command "--foo <bar>" "Foo" 'fn))
+     (command "--foo <bar>" "Foo" fn))
 
 ##### Usage
 
@@ -125,7 +125,7 @@ Define the option `--foo` with an optional argument. If argument is not
 specified, `"baz"` will be used as the argument value.
 
     (commander
-     (command "--foo [bar]" "Foo" 'fn "baz"))
+     (command "--foo [bar]" "Foo" fn "baz"))
 
 ##### Usage
 
@@ -137,7 +137,7 @@ specified, `"baz"` will be used as the argument value.
 Define the option `--foo` with at least one required argument.
 
     (commander
-     (command "--foo <*>" "Foo" 'fn))
+     (command "--foo <*>" "Foo" fn))
 
 ##### Usage
 
@@ -149,7 +149,7 @@ Define the option `--foo` with at least one required argument.
 Define the option `--foo` with zero or more arguments.
 
     (commander
-     (command "--foo [*]" "Foo" 'fn))
+     (command "--foo [*]" "Foo" fn))
 
 ##### Usage
 
@@ -161,7 +161,7 @@ Define the option `--foo` with zero or more arguments.
 Define the option `--foo` with with an alias `-f`.
 
     (commander
-     (option "--foo, -f" "Foo" 'fn))
+     (option "--foo, -f" "Foo" fn))
 
 ##### Usage
 
@@ -179,7 +179,7 @@ Define the option `--help` that prints usage information with
 
     (commander
      (name "my-awesome-program")
-     (option "--help" "Show usage information" 'commander-print-usage))
+     (option "--help" "Show usage information" commander-print-usage))
 
 ##### Usage
 
@@ -196,8 +196,8 @@ Define two commands `show` and `hide` and make `show` the default with
 
     (commander
      (default "show" "everyone")
-     (command "show <stuff>" "Show stuff" 'show)
-     (command "hide <stuff>" "Hide stuff" 'hide))
+     (command "show <stuff>" "Show stuff" show)
+     (command "hide <stuff>" "Hide stuff" hide))
 
 ##### Usage
 
@@ -224,25 +224,25 @@ Create a new project, with optional dev mode:
     ;; emacs -Q -- create
     ;; emacs -Q -- create --dev
     (commander
-     (command "create" "Create new project" 'create)
-     (option "--dev" "Run command in dev mode" 'dev-mode))
+     (command "create" "Create new project" create)
+     (option "--dev" "Run command in dev mode" dev-mode))
 
 Simple find task:
 
     ;; emacs -Q -- find
     ;; emacs -Q -- find path/to/dir --name 'foo.el' --type f
     (commander
-     (command "find [path]" "Find stuff" 'find)
-     (option "--name <path>" "Specify file name" 'name)
-     (option "--type <type>" "Specify file type" 'name))
+     (command "find [path]" "Find stuff" find)
+     (option "--name <path>" "Specify file name" name)
+     (option "--type <type>" "Specify file type" type))
 
 Automatic usage information:
 
     (commander
-     (command "find [path]" "Find stuff" 'find)
-     (command "help" "Show usage information" 'commander-print-usage)
-     (option "--name <path>" "Specify file name" 'name)
-     (option "--type <type>" "Specify file type" 'name))
+     (command "find [path]" "Find stuff" find)
+     (command "help" "Show usage information" commander-print-usage)
+     (option "--name <path>" "Specify file name" name)
+     (option "--type <type>" "Specify file type" name))
 
 The command `emacs -Q -- help` will print:
 
