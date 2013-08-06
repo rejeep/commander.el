@@ -1,5 +1,5 @@
-(source "melpa" "http://melpa.milkbox.net/packages/")
-(source "gnu" "http://elpa.gnu.org/packages/")
+(source melpa)
+(source gnu)
 
 (package-file "commander.el")
 
