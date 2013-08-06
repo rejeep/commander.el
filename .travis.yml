@@ -16,6 +16,7 @@ before_install:
   - export PATH="/home/travis/.cask/bin:$PATH"
   - cask
 env:
+  - EMACS=emacs-snapshot
   - EMACS=emacs24
   - EMACS=emacs
 script:
