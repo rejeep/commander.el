@@ -1,6 +1,6 @@
-;; carton exec emacs --script examples/default.el -- show
-;; carton exec emacs --script examples/default.el -- hide
-;; carton exec emacs --script examples/default.el
+;; cask exec emacs --script examples/default.el -- show
+;; cask exec emacs --script examples/default.el -- hide
+;; cask exec emacs --script examples/default.el
 
 (require 'commander (expand-file-name "commander" default-directory))
 

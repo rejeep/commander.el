@@ -1,4 +1,4 @@
-;; carton exec emacs --script examples/custom-argv.el
+;; cask exec emacs --script examples/custom-argv.el
 
 (require 'commander (expand-file-name "commander" default-directory))
 

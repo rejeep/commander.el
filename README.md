@@ -262,11 +262,11 @@ For more examples, check out: https://github.com/rejeep/commander.el/tree/master
 
 Contribution is much welcome!
 
-Install [carton](https://github.com/rejeep/carton) if you haven't
+Install [cask](https://github.com/rejeep/cask) if you haven't
 already, then:
 
     $ cd /path/to/commander.el
-    $ carton
+    $ cask
 
 Run all tests with:
 

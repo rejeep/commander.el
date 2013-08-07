@@ -1,4 +1,4 @@
-;; carton exec emacs --script examples/options.el -- --cow Muuuu --dog
+;; cask exec emacs --script examples/options.el -- --cow Muuuu --dog
 
 (require 'commander (expand-file-name "commander" default-directory))
 

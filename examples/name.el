@@ -1,4 +1,4 @@
-;; carton exec emacs --script examples/name.el
+;; cask exec emacs --script examples/name.el
 
 (require 'commander (expand-file-name "commander" default-directory))
 
