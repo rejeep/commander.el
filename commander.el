@@ -184,7 +184,7 @@
                                     (setq i (1+ i))
                                     (add-to-list 'next-arguments (nth i arguments) t))
                                   next-arguments)
-                              (when (and (nth (1+ i) arguments) (not (s-matches? commander-option-re (nth (1+ i) arguments))))
+                              (when (and (nth (1+ i) arguments) (not (s-matches? (s-concat "^" commander-option-re "$") (nth (1+ i) arguments))))
                                 (setq i (1+ i))
                                 (nth i arguments))))))
                     (cond (required

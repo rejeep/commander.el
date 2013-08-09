@@ -147,3 +147,12 @@
     (option "--fourty-two" "..." option/fourty-two)
     (option "--42" "..." option/42)
     (parse ("-f" "-F" "-0" "--FOURTY-TWO" "--fourty-two" "--42")))))
+
+(ert-deftest commander-test-option/option-argument-kind-of-look-like-option ()
+  (with-mock
+   (mock (run) :times 1)
+   (mock (p "parse-cppcheck") :times 1)
+   (commander
+    (command "run" "..." run)
+    (option "-p <pattern>" "..." p)
+    (parse ("run" "-p" "parse-cppcheck")))))
