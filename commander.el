@@ -89,14 +89,14 @@
     (-map
      (lambda (flag)
        (let ((to-string flag))
-         (let ((matches (s-match (concat "^" commander-option-re " " "<\\(.+\\)>" "$") flag)))
+         (let ((matches (s-match (concat "\\`" commander-option-re " " "<\\(.+\\)>" "\\'") flag)))
            (when matches
              (setq flag (nth 1 matches))
              (when (nth 2 matches)
                (setq required t)
                (if (equal (nth 2 matches) "*")
                    (setq one-or-more t)))))
-         (let ((matches (s-match (concat "^" commander-option-re " " "\\[\\(.+\\)\\]" "$") flag)))
+         (let ((matches (s-match (concat "\\`" commander-option-re " " "\\[\\(.+\\)\\]" "\\'") flag)))
            (when matches
              (setq flag (nth 1 matches))
              (when (nth 2 matches)
@@ -124,14 +124,14 @@
          one-or-more
          (to-string command)
          (default-values (-take-while 'stringp args)))
-    (let ((matches (s-match (concat "^" commander-command-re " " "<\\(.+\\)>" "$") command)))
+    (let ((matches (s-match (concat "\\`" commander-command-re " " "<\\(.+\\)>" "\\'") command)))
       (when matches
         (setq command (nth 1 matches))
         (when (nth 2 matches)
           (setq required t)
           (if (equal (nth 2 matches) "*")
               (setq one-or-more t)))))
-    (let ((matches (s-match (concat "^" commander-command-re " " "\\[\\(.+\\)\\]" "$") command)))
+    (let ((matches (s-match (concat "\\`" commander-command-re " " "\\[\\(.+\\)\\]" "\\'") command)))
       (when matches
         (setq command (nth 1 matches))
         (when (nth 2 matches)
@@ -167,7 +167,7 @@
   (let ((i 0) (rest))
     (while (< i (length arguments))
       (let ((argument (nth i arguments)))
-        (if (s-matches? (concat "^" commander-option-re "$") argument)
+        (if (s-matches? (concat "\\`" commander-option-re "\\'") argument)
             (let ((commander-option (commander--find-option argument)))
               (if commander-option
                   (let* ((function (commander-option-function commander-option))
@@ -180,11 +180,11 @@
                           (when (or required optional)
                             (if (or (and required one-or-more) (and optional zero-or-more))
                                 (let ((next-arguments))
-                                  (while (and (nth (1+ i) arguments) (not (s-matches? (s-concat "^" commander-option-re "$") (nth (1+ i) arguments))))
+                                  (while (and (nth (1+ i) arguments) (not (s-matches? (s-concat "\\`" commander-option-re "\\'") (nth (1+ i) arguments))))
                                     (setq i (1+ i))
                                     (add-to-list 'next-arguments (nth i arguments) t))
                                   next-arguments)
-                              (when (and (nth (1+ i) arguments) (not (s-matches? (s-concat "^" commander-option-re "$") (nth (1+ i) arguments))))
+                              (when (and (nth (1+ i) arguments) (not (s-matches? (s-concat "\\`" commander-option-re "\\'") (nth (1+ i) arguments))))
                                 (setq i (1+ i))
                                 (nth i arguments))))))
                     (cond (required
