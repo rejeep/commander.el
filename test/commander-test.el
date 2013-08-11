@@ -22,3 +22,10 @@
      (mock (help) :times 1)
      (commander
       (option "--help" "HELP" help)))))
+
+(ert-deftest commander-test/unknown-directive ()
+  (with-mock
+   (mock (error "Unknown directive: %S" '(foo)))
+   (commander
+    (foo)
+    (parse nil))))

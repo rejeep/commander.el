@@ -277,32 +277,34 @@
   (message (commander-usage)))
 
 (defmacro commander (&rest forms)
-  `(let (commander-options
-        commander-commands
-        commander-default-command
-        commander-parsing-done)
-    (-each
-     ',forms
-     (lambda (form)
-       (cl-case (car form)
-         (option
-          (cl-destructuring-bind (_ flags description function &rest default-values) form
-            (commander--option flags description function default-values)))
-         (command
-          (cl-destructuring-bind (_ command description function &rest args) form
-            (commander--command command description function args)))
-         (parse
-          (cl-destructuring-bind (_ arguments) form
-            (commander--parse arguments)
-            (setq commander-parsing-done t)))
-         (name
-          (cl-destructuring-bind (_ name) form
-            (commander--name name)))
-         (default
-           (cl-destructuring-bind (_ command &rest arguments) form
-             (commander--default command arguments))))))
-    (unless commander-parsing-done
-      (commander--parse (cdr command-line-args-left)))))
+  `(progn
+     (setq commander-options nil)
+     (setq commander-commands nil)
+     (setq commander-default-command nil)
+     (setq commander-parsing-done nil)
+     (-each
+      ',forms
+      (lambda (form)
+        (cl-case (car form)
+          (option
+           (cl-destructuring-bind (_ flags description function &rest default-values) form
+             (commander--option flags description function default-values)))
+          (command
+           (cl-destructuring-bind (_ command description function &rest args) form
+             (commander--command command description function args)))
+          (parse
+           (cl-destructuring-bind (_ arguments) form
+             (commander--parse arguments)
+             (setq commander-parsing-done t)))
+          (name
+           (cl-destructuring-bind (_ name) form
+             (commander--name name)))
+          (default
+            (cl-destructuring-bind (_ command &rest arguments) form
+              (commander--default command arguments)))
+          (t (error "Unknown directive: %S" form)))))
+     (unless commander-parsing-done
+       (commander--parse (cdr command-line-args-left)))))
 
 (provide 'commander)
 

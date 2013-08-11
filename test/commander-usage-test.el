@@ -6,9 +6,10 @@
     (command "baz <qux>" "..." ignore)
     (command "qux [*]" "..." ignore)
     (parse nil)
-    (should
-     (equal
-      "USAGE: ert-runner COMMAND [OPTIONS]
+    )
+   (should
+    (equal
+     "USAGE: ert-runner COMMAND [OPTIONS]
 
 COMMANDS:
  qux [*]             ...
@@ -18,16 +19,16 @@ OPTIONS:
  --help              ...
  --foo <bar>         ...
 "
-      (commander-usage))))))
+     (commander-usage)))))
 
 (ert-deftest commander-test-usage/with-custom-name ()
   (with-mock
    (commander
     (name "foo")
-    (parse nil)
-    (should
-     (equal
-      "USAGE: foo COMMAND [OPTIONS]
+    (parse nil))
+   (should
+    (equal
+     "USAGE: foo COMMAND [OPTIONS]
 
 COMMANDS:
 
@@ -35,4 +36,4 @@ COMMANDS:
 OPTIONS:
 
 "
-      (commander-usage))))))
+     (commander-usage)))))
