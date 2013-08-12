@@ -228,15 +228,26 @@ Slots:
 
 
 
+(defun commander-usage-padding ()
+  (+
+   10
+   (-max
+    (length
+     (commander-option-to-string
+      (--max-by (length (commander-option-to-string it)) commander-options)))
+    (length
+     (commander-command-to-string
+      (--max-by (length (commander-command-to-string it)) commander-commands))))))
+
 (defun commander--usage-command (commander-command)
   (let ((to-string (commander-command-to-string commander-command))
         (description (commander-command-description commander-command)))
-    (s-concat " " (s-pad-right 20 " " to-string) description)))
+    (s-concat " " (s-pad-right (commander-usage-padding) " " to-string) description)))
 
 (defun commander--usage-option (commander-option)
   (let ((to-string (commander-option-to-string commander-option))
         (description (commander-option-description commander-option)))
-    (s-concat " " (s-pad-right 20 " " to-string) description)))
+    (s-concat " " (s-pad-right (commander-usage-padding) " " to-string) description)))
 
 (defun commander-usage ()
   "Return usage information as a string."
