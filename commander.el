@@ -4,7 +4,7 @@
 
 ;; Author: Johan Andersson <johan.rejeep@gmail.com>
 ;; Maintainer: Johan Andersson <johan.rejeep@gmail.com>
-;; Version: 0.1.3
+;; Version: 0.1.4
 ;; Keywords: cli, argv
 ;; URL: http://github.com/rejeep/commander.el
 ;; Package-Requires: ((s "1.6.0") (dash "1.3.2") (cl-lib "0.3") (f "0.4.1"))
