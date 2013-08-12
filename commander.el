@@ -128,7 +128,7 @@ Slots:
   "Command to use when no command, only options and input.")
 
 (defconst commander-option-re
-  "\\(-[A-Za-z0-9-]\\|--[A-Za-z0-9][A-Za-z0-9-]+\\)"
+  "\\(-[A-Za-z0-9-]\\|--?[A-Za-z0-9][A-Za-z0-9-]+\\)"
   "Regex matching an option flag.")
 
 (defconst commander-command-re
