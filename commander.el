@@ -121,6 +121,9 @@ Slots:
 (defvar commander-name nil
   "Name of command.")
 
+(defvar commander-description nil
+  "Description of program.")
+
 (defvar commander-default-command nil
   "Command to use when no command parsed.")
 
@@ -236,13 +239,19 @@ Slots:
 
 (defun commander-usage ()
   "Return usage information as a string."
-  (let ((binary (or commander-name (file-name-nondirectory load-file-name)))
-        (format-string "USAGE: %s COMMAND [OPTIONS]\n\nCOMMANDS:\n%s\n\nOPTIONS:\n%s\n")
-        (commands
+  (let ((name (or commander-name (f-filename load-file-name)))
+        (commands-string
          (s-join "\n" (--map (commander--usage-command it) commander-commands)))
-        (options
+        (options-string
          (s-join "\n" (--map (commander--usage-option it) commander-options))))
-    (format format-string binary commands options)))
+    (s-concat
+     (format "USAGE: %s [COMMAND] [OPTIONS]" name)
+     (when commander-description
+       (s-concat "\n\n" commander-description))
+     (when commander-commands
+       (s-concat "\n\nCOMMANDS:\n\n" commands-string))
+     (when commander-options
+       (s-concat "\n\nOPTIONS:\n\n" options-string)))))
 
 (defun commander-print-usage ()
   "Print usage information."
@@ -329,6 +338,9 @@ Slots:
 (defun commander-name (name)
   (setq commander-name name))
 
+(defun commander-description (description)
+  (setq commander-description description))
+
 (defun commander-default (command-or-function arguments)
   (if (stringp command-or-function)
       (setq
@@ -348,6 +360,7 @@ Slots:
   `(progn
      (setq commander-options nil)
      (setq commander-commands nil)
+     (setq commander-description nil)
      (setq commander-default-command nil)
      (setq commander-no-command nil)
      (setq commander-parsing-done nil)
@@ -368,6 +381,9 @@ Slots:
           (name
            (cl-destructuring-bind (_ name) form
              (commander-name name)))
+          (description
+           (cl-destructuring-bind (_ description) form
+             (commander-description description)))
           (default
             (cl-destructuring-bind (_ command-or-function &rest arguments) form
               (commander-default command-or-function arguments)))
