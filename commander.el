@@ -391,7 +391,7 @@ Slots:
               (commander-default command-or-function arguments)))
           (t (error "Unknown directive: %S" form)))))
      (unless commander-parsing-done
-       (commander--parse (cdr command-line-args-left)))))
+       (commander-parse (cdr command-line-args-left)))))
 
 (provide 'commander)
 
