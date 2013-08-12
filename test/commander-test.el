@@ -29,3 +29,19 @@
    (commander
     (foo)
     (parse nil))))
+
+(ert-deftest commander-test/with-default-function ()
+  (with-mock
+   (mock (no-command "foo" "bar" "baz" "qux"))
+   (commander
+    (option "-x <arg>" "..." ignore)
+    (default no-command)
+    (parse ("foo" "bar" "-x" "foo" "baz" "qux")))))
+
+(ert-deftest commander-test/with-default-function-and-arguments ()
+  (with-mock
+   (mock (no-command "foo" "bar"))
+   (commander
+    (option "-x <arg>" "..." ignore)
+    (default no-command "foo" "bar")
+    (parse ("-x" "foo")))))

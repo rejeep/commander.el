@@ -61,10 +61,15 @@
   command
   arguments)
 
+(cl-defstruct commander-no-command
+  function
+  arguments)
+
 (defvar commander-options nil)
 (defvar commander-commands nil)
 (defvar commander-name nil)
 (defvar commander-default-command nil)
+(defvar commander-no-command nil)
 
 (defconst commander-option-re
   "\\(-[A-Za-z0-9-]\\|--[A-Za-z0-9][A-Za-z0-9-]+\\)"
@@ -74,12 +79,18 @@
   "\\([A-Za-z0-9][A-Za-z0-9-]*\\)"
   "Regex matching an command.")
 
-(defun commander--default (command arguments)
-  (setq
-   commander-default-command
-   (make-commander-default-command
-    :command command
-    :arguments arguments)))
+(defun commander--default (command-or-function arguments)
+  (if (stringp command-or-function)
+      (setq
+       commander-default-command
+       (make-commander-default-command
+        :command command-or-function
+        :arguments arguments))
+    (setq
+     commander-no-command
+     (make-commander-no-command
+      :function command-or-function
+      :arguments arguments))))
 
 (defun commander--name (name)
   (setq commander-name name))
@@ -230,7 +241,11 @@
                  (apply function rest))
                 (t
                  (funcall function))))
-      (error "Command `%s` not available" command))))
+      (when commander-no-command
+        (let ((function (commander-no-command-function commander-no-command)))
+          (unless arguments
+            (setq arguments (commander-no-command-arguments commander-no-command)))
+          (apply function arguments))))))
 
 (defun commander--find-greedy (arguments)
   (-first
@@ -250,7 +265,7 @@
           (let ((command (commander-default-command-command commander-default-command))
                 (arguments (commander-default-command-arguments commander-default-command)))
             (setq rest (cons command arguments)))))
-    (when rest (commander--handle-command rest))))
+    (commander--handle-command rest)))
 
 (defun commander--usage-command (commander-command)
   (let ((to-string (commander-command-to-string commander-command))
@@ -300,8 +315,8 @@
            (cl-destructuring-bind (_ name) form
              (commander--name name)))
           (default
-            (cl-destructuring-bind (_ command &rest arguments) form
-              (commander--default command arguments)))
+            (cl-destructuring-bind (_ command-or-function &rest arguments) form
+              (commander--default command-or-function arguments)))
           (t (error "Unknown directive: %S" form)))))
      (unless commander-parsing-done
        (commander--parse (cdr command-line-args-left)))))
