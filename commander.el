@@ -361,6 +361,7 @@ Slots:
   `(progn
      (setq commander-options nil)
      (setq commander-commands nil)
+     (setq commander-name nil)
      (setq commander-description nil)
      (setq commander-default-command nil)
      (setq commander-no-command nil)
