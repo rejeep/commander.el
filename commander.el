@@ -120,7 +120,7 @@ Slots:
   "List of all commands.")
 
 (defvar commander-name nil
-  "Name of command.")
+  "Name of program.")
 
 (defvar commander-description nil
   "Description of program.")
