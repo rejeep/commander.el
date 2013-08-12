@@ -349,6 +349,7 @@ Slots:
      (setq commander-options nil)
      (setq commander-commands nil)
      (setq commander-default-command nil)
+     (setq commander-no-command nil)
      (setq commander-parsing-done nil)
      (-each
       ',forms
