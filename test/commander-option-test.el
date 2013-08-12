@@ -156,3 +156,10 @@
     (command "run" "..." run)
     (option "-p <pattern>" "..." p)
     (parse ("run" "-p" "parse-cppcheck")))))
+
+(ert-deftest commander-test-option/long-single-dash ()
+  (with-mock
+   (mock (help) :times 1)
+   (commander
+    (option "-help" "..." help)
+    (parse ("-help")))))
