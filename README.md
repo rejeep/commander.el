@@ -17,7 +17,7 @@ I recommend installing via ELPA, but manual installation is simple as well:
 * [command](https://github.com/rejeep/commander.el#command-command-description-function-rest-default-values) `(command description function &rest default-values)`
 * [option](https://github.com/rejeep/commander.el#option-flags-description-function-rest-default-values) `(flags description function &rest default-values)`
 * [name](https://github.com/rejeep/commander.el#name-name) `(name)`
-* [default](https://github.com/rejeep/commander.el#default-command-rest-arguments) `(command &rest arguments)`
+* [default](https://github.com/rejeep/commander.el#default-command-or-function-rest-arguments) `(command-or-function &rest arguments)`
 * [parse](https://github.com/rejeep/commander.el#parse-arguments) `(arguments)`
 
 ### Details
@@ -185,9 +185,13 @@ Define the option `--help` that prints usage information with
 
     $ emacs -Q -- --help
 
-#### default `(command &rest arguments)`
+#### default `(command-or-function &rest arguments)`
 
-Specify default command if no command is specified.
+Specify default behaviour when no matching commands.
+
+If `command-or-function` is a string, use that command if no command
+is specified. If symbol, call that function with all arguments if
+first argument does not match a command.
 
 ##### Example
 
@@ -203,6 +207,21 @@ Define two commands `show` and `hide` and make `show` the default with
 
     $ emacs -Q -- show me
     $ emacs -Q -- hide you
+    $ emacs -Q
+
+##### Example
+
+For each file argument, print the content.
+
+    (defun print-file-content (file)
+      (princ (f-read file)))
+
+    (commander
+     (default print-file-content "foo.txt"))
+
+##### Usage
+
+    $ emacs -Q -- foo.txt bar.txt
     $ emacs -Q
 
 #### parse `(arguments)`

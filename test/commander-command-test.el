@@ -86,12 +86,6 @@
     (command "help [*]" "HELP" help)
     (parse ("--foo" "bar" "help" "foo" "--qux")))))
 
-(ert-deftest commander-test-command/not-registered ()
-  (with-mock
-   (mock (error "Command `%s` not available" "foo"))
-   (commander
-    (parse ("foo")))))
-
 (ert-deftest commander-test-command/required-options-then-option-after ()
   (with-mock
    (mock (say "One" "Two" "Three") :times 1)
