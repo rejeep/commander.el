@@ -30,11 +30,35 @@
 
 ;;; Code:
 
+
+
 (require 'cl-lib)
 (require 's)
 (require 'dash)
 
+
+
 (cl-defstruct commander-option
+  "Structure describing an option.
+Slots:
+
+`flag' The option name (-f, -foo, --foo).
+
+`description' Description of what the option does.
+
+`function' Function to run when option used.
+
+`default-values' Default values to call `function' with if none given.
+
+`required' Required argument(s).
+
+`optional' Optional argument(s).
+
+`zero-or-more' Zero or more arguments allowed or required.
+
+`one-or-more' One or more arguments allowed or required.
+
+`to-string' String representation of option."
   flag
   description
   function
@@ -46,11 +70,22 @@
   to-string)
 
 (cl-defstruct commander-command
+  "Structure describing a command.
+Slots:
+
+`command' The command name (foo, foo-bar).
+`description' Description of what the command does.
+`function' Function to run when command used.
+`default-values' Default values to call `function' with if none given.
+`required' Required argument(s).
+`optional' Optional argument(s).
+`zero-or-more' Zero or more arguments allowed or required.
+`one-or-more' One or more arguments allowed or required.
+`to-string' String representation of command."
   command
   description
   function
   default-values
-  greedy
   required
   optional
   zero-or-more
@@ -58,18 +93,39 @@
   to-string)
 
 (cl-defstruct commander-default-command
+  "Structure describing the default command.
+Slots:
+
+`command' The name of the default command.
+`arguments' The arguments to use for `command'."
   command
   arguments)
 
 (cl-defstruct commander-no-command
+  "Structure describing the no command.
+Slots:
+
+`function' The function to call when no command.
+`arguments' The arguments to use for `function'."
   function
   arguments)
 
-(defvar commander-options nil)
-(defvar commander-commands nil)
-(defvar commander-name nil)
-(defvar commander-default-command nil)
-(defvar commander-no-command nil)
+
+
+(defvar commander-options nil
+  "List of all options.")
+
+(defvar commander-commands nil
+  "List of all commands.")
+
+(defvar commander-name nil
+  "Name of command.")
+
+(defvar commander-default-command nil
+  "Command to use when no command parsed.")
+
+(defvar commander-no-command nil
+  "Command to use when no command, only options and input.")
 
 (defconst commander-option-re
   "\\(-[A-Za-z0-9-]\\|--[A-Za-z0-9][A-Za-z0-9-]+\\)"
@@ -79,88 +135,7 @@
   "\\([A-Za-z0-9][A-Za-z0-9-]*\\)"
   "Regex matching an command.")
 
-(defun commander--default (command-or-function arguments)
-  (if (stringp command-or-function)
-      (setq
-       commander-default-command
-       (make-commander-default-command
-        :command command-or-function
-        :arguments arguments))
-    (setq
-     commander-no-command
-     (make-commander-no-command
-      :function command-or-function
-      :arguments arguments))))
-
-(defun commander--name (name)
-  (setq commander-name name))
-
-(defun commander--option (flags description function default-values)
-  (let (required optional zero-or-more one-or-more)
-    (-map
-     (lambda (flag)
-       (let ((to-string flag))
-         (let ((matches (s-match (concat "\\`" commander-option-re " " "<\\(.+\\)>" "\\'") flag)))
-           (when matches
-             (setq flag (nth 1 matches))
-             (when (nth 2 matches)
-               (setq required t)
-               (if (equal (nth 2 matches) "*")
-                   (setq one-or-more t)))))
-         (let ((matches (s-match (concat "\\`" commander-option-re " " "\\[\\(.+\\)\\]" "\\'") flag)))
-           (when matches
-             (setq flag (nth 1 matches))
-             (when (nth 2 matches)
-               (setq optional t)
-               (if (equal (nth 2 matches) "*")
-                   (setq zero-or-more t)))))
-         (add-to-list
-          'commander-options
-          (make-commander-option
-           :flag flag
-           :description description
-           :function function
-           :default-values default-values
-           :required required
-           :optional optional
-           :zero-or-more zero-or-more
-           :one-or-more one-or-more
-           :to-string to-string))))
-     (-map 's-trim (s-split "," flags)))))
-
-(defun commander--command (command description function args)
-  (let* (required
-         optional
-         zero-or-more
-         one-or-more
-         (to-string command)
-         (default-values (-take-while 'stringp args)))
-    (let ((matches (s-match (concat "\\`" commander-command-re " " "<\\(.+\\)>" "\\'") command)))
-      (when matches
-        (setq command (nth 1 matches))
-        (when (nth 2 matches)
-          (setq required t)
-          (if (equal (nth 2 matches) "*")
-              (setq one-or-more t)))))
-    (let ((matches (s-match (concat "\\`" commander-command-re " " "\\[\\(.+\\)\\]" "\\'") command)))
-      (when matches
-        (setq command (nth 1 matches))
-        (when (nth 2 matches)
-          (setq optional t)
-          (if (equal (nth 2 matches) "*")
-              (setq zero-or-more t)))))
-    (add-to-list
-     'commander-commands
-     (make-commander-command
-      :command command
-      :description description
-      :function function
-      :default-values default-values
-      :required required
-      :optional optional
-      :zero-or-more zero-or-more
-      :one-or-more one-or-more
-      :to-string to-string))))
+
 
 (defun commander--find-option (option)
   (-first
@@ -247,25 +222,7 @@
             (setq arguments (commander-no-command-arguments commander-no-command)))
           (apply function arguments))))))
 
-(defun commander--find-greedy (arguments)
-  (-first
-   (lambda (commander-command)
-     (-any?
-      (lambda (argument)
-        (and
-         (commander-command-greedy commander-command)
-         (equal (commander-command-command commander-command) argument)))
-      arguments))
-   commander-commands))
-
-(defun commander--parse (arguments)
-  (let ((rest (commander--handle-options arguments)))
-    (unless rest
-      (if commander-default-command
-          (let ((command (commander-default-command-command commander-default-command))
-                (arguments (commander-default-command-arguments commander-default-command)))
-            (setq rest (cons command arguments)))))
-    (commander--handle-command rest)))
+
 
 (defun commander--usage-command (commander-command)
   (let ((to-string (commander-command-to-string commander-command))
@@ -291,6 +248,102 @@
   "Print usage information."
   (message (commander-usage)))
 
+
+
+(defun commander-option (flags description function default-values)
+  (let (required optional zero-or-more one-or-more)
+    (-map
+     (lambda (flag)
+       (let ((to-string flag))
+         (let ((matches (s-match (concat "\\`" commander-option-re " " "<\\(.+\\)>" "\\'") flag)))
+           (when matches
+             (setq flag (nth 1 matches))
+             (when (nth 2 matches)
+               (setq required t)
+               (if (equal (nth 2 matches) "*")
+                   (setq one-or-more t)))))
+         (let ((matches (s-match (concat "\\`" commander-option-re " " "\\[\\(.+\\)\\]" "\\'") flag)))
+           (when matches
+             (setq flag (nth 1 matches))
+             (when (nth 2 matches)
+               (setq optional t)
+               (if (equal (nth 2 matches) "*")
+                   (setq zero-or-more t)))))
+         (add-to-list
+          'commander-options
+          (make-commander-option
+           :flag flag
+           :description description
+           :function function
+           :default-values default-values
+           :required required
+           :optional optional
+           :zero-or-more zero-or-more
+           :one-or-more one-or-more
+           :to-string to-string))))
+     (-map 's-trim (s-split "," flags)))))
+
+(defun commander-command (command description function args)
+  (let* (required
+         optional
+         zero-or-more
+         one-or-more
+         (to-string command)
+         (default-values (-take-while 'stringp args)))
+    (let ((matches (s-match (concat "\\`" commander-command-re " " "<\\(.+\\)>" "\\'") command)))
+      (when matches
+        (setq command (nth 1 matches))
+        (when (nth 2 matches)
+          (setq required t)
+          (if (equal (nth 2 matches) "*")
+              (setq one-or-more t)))))
+    (let ((matches (s-match (concat "\\`" commander-command-re " " "\\[\\(.+\\)\\]" "\\'") command)))
+      (when matches
+        (setq command (nth 1 matches))
+        (when (nth 2 matches)
+          (setq optional t)
+          (if (equal (nth 2 matches) "*")
+              (setq zero-or-more t)))))
+    (add-to-list
+     'commander-commands
+     (make-commander-command
+      :command command
+      :description description
+      :function function
+      :default-values default-values
+      :required required
+      :optional optional
+      :zero-or-more zero-or-more
+      :one-or-more one-or-more
+      :to-string to-string))))
+
+(defun commander-parse (arguments)
+  (let ((rest (commander--handle-options arguments)))
+    (unless rest
+      (if commander-default-command
+          (let ((command (commander-default-command-command commander-default-command))
+                (arguments (commander-default-command-arguments commander-default-command)))
+            (setq rest (cons command arguments)))))
+    (commander--handle-command rest)))
+
+(defun commander-name (name)
+  (setq commander-name name))
+
+(defun commander-default (command-or-function arguments)
+  (if (stringp command-or-function)
+      (setq
+       commander-default-command
+       (make-commander-default-command
+        :command command-or-function
+        :arguments arguments))
+    (setq
+     commander-no-command
+     (make-commander-no-command
+      :function command-or-function
+      :arguments arguments))))
+
+
+
 (defmacro commander (&rest forms)
   `(progn
      (setq commander-options nil)
@@ -303,20 +356,20 @@
         (cl-case (car form)
           (option
            (cl-destructuring-bind (_ flags description function &rest default-values) form
-             (commander--option flags description function default-values)))
+             (commander-option flags description function default-values)))
           (command
            (cl-destructuring-bind (_ command description function &rest args) form
-             (commander--command command description function args)))
+             (commander-command command description function args)))
           (parse
            (cl-destructuring-bind (_ arguments) form
-             (commander--parse arguments)
+             (commander-parse arguments)
              (setq commander-parsing-done t)))
           (name
            (cl-destructuring-bind (_ name) form
-             (commander--name name)))
+             (commander-name name)))
           (default
             (cl-destructuring-bind (_ command-or-function &rest arguments) form
-              (commander--default command-or-function arguments)))
+              (commander-default command-or-function arguments)))
           (t (error "Unknown directive: %S" form)))))
      (unless commander-parsing-done
        (commander--parse (cdr command-line-args-left)))))
