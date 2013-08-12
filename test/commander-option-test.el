@@ -163,3 +163,19 @@
    (commander
     (option "-help" "..." help)
     (parse ("-help")))))
+
+(ert-deftest commander-test-option/same-option-twice-with-command-no-args ()
+  (with-mock
+   (mock (foo) :times 1)
+   (mock (bar) :times 2)
+   (commander
+    (command "foo" "..." foo)
+    (option "--bar" "..." bar)
+    (parse ("--bar" "foo" "--bar")))))
+
+(ert-deftest commander-test-option/same-option-twice-no-command-with-arg ()
+  (with-mock
+   (mock (foo "bar") :times 2)
+   (commander
+    (option "--foo <arg>" "..." foo)
+    (parse ("--foo" "bar" "--foo" "bar")))))
