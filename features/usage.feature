@@ -145,3 +145,32 @@ Feature: Usage
        --bar          BAR
        --foo          FOO
       """
+
+  Scenario: Multiline descriptions
+    Given this schedule:
+      """
+      (commander
+       (name "command")
+       (command "foo" ("FOO" "AND" "FRIENDS") ignore)
+       (command "bar" "BAR" ignore)
+       (option "--foo" ("FOO" "AND" "FRIENDS") ignore)
+       (option "--bar" "BAR" ignore))
+      """
+    Then usage should be:
+      """
+      USAGE: command [COMMAND] [OPTIONS]
+
+      COMMANDS:
+
+       bar            BAR
+       foo            FOO
+                      AND
+                      FRIENDS
+
+      OPTIONS:
+
+       --bar          BAR
+       --foo          FOO
+                      AND
+                      FRIENDS
+      """

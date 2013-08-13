@@ -243,15 +243,30 @@ Slots:
           (--max-by (length (commander-command-to-string it)) commander-commands)))
       0))))
 
+(defun commander--usage-command-or-option (to-string description)
+  (unless (listp description)
+    (setq description (list description)))
+  (let ((padding (commander--usage-padding)))
+    (s-concat
+     " "
+     to-string
+     (s-repeat (- padding (length to-string)) " ")
+     (car description)
+     (s-join
+      ""
+      (--map
+       (s-concat "\n" (s-repeat (1+ padding) " ") it)
+       (cdr description))))))
+
 (defun commander--usage-command (commander-command)
   (let ((to-string (commander-command-to-string commander-command))
         (description (commander-command-description commander-command)))
-    (s-concat " " (s-pad-right (commander--usage-padding) " " to-string) description)))
+    (commander--usage-command-or-option to-string description)))
 
 (defun commander--usage-option (commander-option)
   (let ((to-string (commander-option-to-string commander-option))
         (description (commander-option-description commander-option)))
-    (s-concat " " (s-pad-right (commander--usage-padding) " " to-string) description)))
+    (commander--usage-command-or-option to-string description)))
 
 (defun commander-usage ()
   "Return usage information as a string."
