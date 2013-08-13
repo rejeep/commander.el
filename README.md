@@ -17,6 +17,7 @@ I recommend installing via ELPA, but manual installation is simple as well:
 * [command](https://github.com/rejeep/commander.el#command-command-description-function-rest-default-values) `(command description function &rest default-values)`
 * [option](https://github.com/rejeep/commander.el#option-flags-description-function-rest-default-values) `(flags description function &rest default-values)`
 * [name](https://github.com/rejeep/commander.el#name-name) `(name)`
+* [description](https://github.com/rejeep/commander.el#description-description) `(description)`
 * [default](https://github.com/rejeep/commander.el#default-command-or-function-rest-arguments) `(command-or-function &rest arguments)`
 * [parse](https://github.com/rejeep/commander.el#parse-arguments) `(arguments)`
 
@@ -179,6 +180,23 @@ Define the option `--help` that prints usage information with
 
     (commander
      (name "my-awesome-program")
+     (option "--help" "Show usage information" commander-print-usage))
+
+##### Usage
+
+    $ emacs -Q -- --help
+
+#### description `(description)`
+
+Specify description in usage information.
+
+##### Example
+
+Define the option `--help` that prints usage information with description.
+
+    (commander
+     (name "my-awesome-program")
+     (description "Truly awesome program, does what you wish for")
      (option "--help" "Show usage information" commander-print-usage))
 
 ##### Usage
