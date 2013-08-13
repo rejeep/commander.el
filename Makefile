@@ -3,12 +3,15 @@ CASK ?= cask
 
 all: test
 
-test: clean-elc unit
+test: clean-elc unit unit-compiled ecukes
 
-test-compiled: compile unit clean-elc
+unit-compiled: compile unit
 
 unit:
 	${CASK} exec ert-runner run -l test/commander-init.el test/ert-loader.el
+
+ecukes:
+	${CASK} exec ecukes --script features --dbg
 
 compile:
 	${CASK} exec ${EMACS} -Q -batch -f batch-byte-compile commander.el
@@ -16,4 +19,4 @@ compile:
 clean-elc:
 	rm -f commander.elc
 
-.PHONY:	all test test-compiled unit compile clean-elc
+.PHONY:	all test unit-compiled unit compile clean-elc ecukes
