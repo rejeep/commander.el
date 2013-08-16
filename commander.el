@@ -119,6 +119,9 @@ Slots:
 (defvar commander-commands nil
   "List of all commands.")
 
+(defvar commander-parsing-done nil
+  "Is parsing done or not.")
+
 (defvar commander-name nil
   "Name of program.")
 
