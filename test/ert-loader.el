@@ -2,13 +2,13 @@
 
 (require 'f)
 
-(defvar f-root-path
+(defvar commander-root-path
   (f-parent (f-parent load-file-name))
   "Path to root.")
 
-(defvar f-vendor-path
-  (f-expand "vendor" f-root-path)
+(defvar commander-vendor-path
+  (f-expand "vendor" commander-root-path)
   "Path to vendor.")
 
 (unless (require 'ert nil 'noerror)
-  (require 'ert (f-expand "ert" f-vendor-path)))
+  (require 'ert (f-expand "ert" commander-vendor-path)))
