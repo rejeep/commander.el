@@ -6,7 +6,7 @@ all: test
 test: clean-elc unit ecukes
 
 unit:
-	${CASK} exec ert-runner run -l test/commander-init.el test/ert-loader.el
+	${CASK} exec ert-runner -l test/commander-init.el test/ert-loader.el
 
 ecukes:
 	${CASK} exec ecukes --script features --dbg
