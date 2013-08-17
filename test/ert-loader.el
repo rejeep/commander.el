@@ -1,4 +1,4 @@
-;;; ert-loader.el - Load Ert if not included in Emacs
+;;; ert-loader.el --- Load Ert if not included in Emacs
 
 (require 'f)
 
