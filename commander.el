@@ -7,7 +7,7 @@
 ;; Version: 0.2.0
 ;; Keywords: cli, argv
 ;; URL: http://github.com/rejeep/commander.el
-;; Package-Requires: ((s "1.6.0") (dash "1.6.0") (cl-lib "0.3") (f "0.4.1"))
+;; Package-Requires: ((s "1.6.0") (dash "2.0.0") (cl-lib "0.3") (f "0.4.1"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -36,6 +36,7 @@
 (require 'f)
 (require 's)
 (require 'dash)
+(require 'dash-functional)
 
 
 
@@ -232,19 +233,21 @@ Slots:
 
 
 (defun commander--usage-padding ()
-  (+
-   10
-   (-max
-    (if commander-options
-        (length
-         (commander-option-to-string
-          (--max-by (length (commander-option-to-string it)) commander-options)))
-      0)
-    (if commander-commands
-        (length
-         (commander-command-to-string
-          (--max-by (length (commander-command-to-string it)) commander-commands)))
-      0))))
+  (let* ((combinator-fn
+          (-on '> (lambda (i) (length (commander-option-to-string i)))))
+         (max-option
+          (--max-by combinator-fn commander-options))
+         (max-command
+          (--max-by combinator-fn commander-commands)))
+    (+
+     (max
+      (if max-option
+          (length (commander-option-to-string max-option))
+        0)
+      (if max-command
+          (length (commander-command-to-string max-command))
+        0))
+     10)))
 
 (defun commander--usage-command-or-option (to-string description)
   (unless (listp description)
