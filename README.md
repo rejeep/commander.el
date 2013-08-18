@@ -242,6 +242,29 @@ For each file argument, print the content.
     $ emacs -Q -- foo.txt bar.txt
     $ emacs -Q
 
+#### config `(file)`
+
+Parse `file` for default arguments and command. Each line is a command
+or option, including arguments.
+
+##### Example
+
+For each file argument, print the content.
+
+    ;; cmd.opts
+    ;;
+    ;;  --foo bar
+
+    (commander
+     (config "cmd.opts")
+     (option "--foo <arg>" "..." ignore)
+     (option "--bar <arg>" "..." ignore))
+
+##### Usage
+
+    $ emacs -Q -- --bar arg
+    $ emacs -Q
+
 #### parse `(arguments)`
 
 Parse `arguments` with defined schema. If `#parse` is not called
