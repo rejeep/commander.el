@@ -7,7 +7,7 @@
 ;; Version: 0.2.1
 ;; Keywords: cli, argv
 ;; URL: http://github.com/rejeep/commander.el
-;; Package-Requires: ((s "1.6.0") (dash "2.0.0") (cl-lib "0.3") (f "0.6.0"))
+;; Package-Requires: ((s "1.6.0") (dash "2.0.0") (cl-lib "0.3") (f "0.6.1"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -128,6 +128,9 @@ Slots:
 
 (defvar commander-description nil
   "Description of program.")
+
+(defvar commander-default-config nil
+  "List of default CLI configuration options from config file.")
 
 (defvar commander-default-command nil
   "Command to use when no command parsed.")
@@ -364,7 +367,9 @@ Slots:
       :to-string to-string))))
 
 (defun commander-parse (arguments)
-  (let ((rest (commander--handle-options arguments)))
+  (let ((rest
+         (or (commander--handle-options arguments)
+             (commander--handle-options commander-default-config))))
     (unless rest
       (if commander-default-command
           (let ((command (commander-default-command-command commander-default-command))
@@ -377,6 +382,12 @@ Slots:
 
 (defun commander-description (description)
   (setq commander-description description))
+
+(defun commander-config (file)
+  (when (f-file? file)
+    (let ((lines (s-lines (f-read-text file 'utf-8))))
+      (setq commander-default-config
+            (-flatten (--map (s-split " " it) lines))))))
 
 (defun commander-default (command-or-function arguments)
   (if (stringp command-or-function)
@@ -395,6 +406,7 @@ Slots:
 
 (defmacro commander (&rest forms)
   `(progn
+     (setq commander-default-config nil)
      (setq commander-options nil)
      (setq commander-commands nil)
      (setq commander-name nil)
@@ -422,6 +434,9 @@ Slots:
           (description
            (cl-destructuring-bind (_ description) form
              (commander-description description)))
+          (config
+           (cl-destructuring-bind (_ file) form
+             (commander-config file)))
           (default
             (cl-destructuring-bind (_ command-or-function &rest arguments) form
               (commander-default command-or-function arguments)))
