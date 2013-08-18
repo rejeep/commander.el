@@ -7,7 +7,7 @@
 ;; Version: 0.3.0
 ;; Keywords: cli, argv
 ;; URL: http://github.com/rejeep/commander.el
-;; Package-Requires: ((s "1.6.0") (dash "2.0.0") (cl-lib "0.3") (f "0.6.1"))
+;; Package-Requires: ((s "1.6.0") (dash "2.0.0") (dash-functional "1.0.0") (cl-lib "0.3") (f "0.6.1"))
 
 ;; This file is NOT part of GNU Emacs.
 
