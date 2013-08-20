@@ -7,7 +7,7 @@
 ;; Version: 0.3.1
 ;; Keywords: cli, argv
 ;; URL: http://github.com/rejeep/commander.el
-;; Package-Requires: ((s "1.6.0") (dash "2.0.0") (dash-functional "1.0.0") (cl-lib "0.3") (f "0.6.1"))
+;; Package-Requires: ((s "1.6.0") (dash "2.0.0") (cl-lib "0.3") (f "0.6.1"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -36,7 +36,6 @@
 (require 'f)
 (require 's)
 (require 'dash)
-(require 'dash-functional)
 
 
 
@@ -234,23 +233,15 @@ Slots:
           (apply function arguments))))))
 
 
+;;;; Usage
 
 (defun commander--usage-padding ()
-  (let* ((combinator-fn
-          (-on '> (lambda (i) (length (commander-option-to-string i)))))
-         (max-option
-          (--max-by combinator-fn commander-options))
-         (max-command
-          (--max-by combinator-fn commander-commands)))
-    (+
-     (max
-      (if max-option
-          (length (commander-option-to-string max-option))
-        0)
-      (if max-command
-          (length (commander-command-to-string max-command))
-        0))
-     10)))
+  (let (max-option (max-option-value 0) max-command (max-command-value 0))
+    (--each commander-options
+      (setq max-option-value (max max-option-value (length (commander-option-to-string it)))))
+    (--each commander-commands
+      (setq max-command-value (max max-command-value (length (commander-command-to-string it)))))
+    (+ (max max-option-value max-command-value) 10)))
 
 (defun commander--usage-command-or-option (to-string description)
   (unless (listp description)
