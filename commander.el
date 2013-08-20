@@ -358,9 +358,8 @@ Slots:
       :to-string to-string))))
 
 (defun commander-parse (arguments)
-  (let ((rest
-         (or (commander--handle-options arguments)
-             (commander--handle-options commander-default-config))))
+  (let* ((rest-config (commander--handle-options commander-default-config))
+         (rest (or (commander--handle-options arguments) rest-config)))
     (unless rest
       (if commander-default-command
           (let ((command (commander-default-command-command commander-default-command))

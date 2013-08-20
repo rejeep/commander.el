@@ -38,7 +38,7 @@
      (option "--baz" "..." baz)
      (parse ("--baz"))))))
 
-(ert-deftest commander-config-test/override-options-skank ()
+(ert-deftest commander-config-test/override-options ()
   (with-sandbox
    (f-write-text "--foo bar" 'utf-8 "default.opts")
    (with-mock
@@ -47,6 +47,32 @@
      (config "default.opts")
      (option "--foo <arg>" "..." foo)
      (parse ("--foo" "baz"))))))
+
+(ert-deftest commander-config-test/extend-options ()
+  (with-sandbox
+   (f-write-text "--foo bar" 'utf-8 "default.opts")
+   (with-mock
+    (mock (foo) :times 1)
+    (mock (bar) :times 1)
+    (commander
+     (config "default.opts")
+     (option "--foo" "..." foo)
+     (option "--bar" "..." bar)
+     (parse ("--bar"))))))
+
+(ert-deftest commander-config-test/extend-options-with-command ()
+  (with-sandbox
+   (f-write-text "--foo" 'utf-8 "default.opts")
+   (with-mock
+    (mock (foo) :times 1)
+    (mock (bar) :times 1)
+    (mock (cmd) :times 1)
+    (commander
+     (config "default.opts")
+     (option "--foo" "..." foo)
+     (option "--bar" "..." bar)
+     (command "cmd" "..." cmd)
+     (parse ("cmd" "--bar"))))))
 
 
 ;;;; Commands
