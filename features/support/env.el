@@ -18,8 +18,3 @@
 (unless (require 'ert nil 'noerror)
   (require 'ert (f-expand "ert" commander-vendor-path)))
 (require 'commander)
-
-(Fail
- (message "---------- FAIL ----------")
- (message (commander-usage))
- (message "--------------------------"))
