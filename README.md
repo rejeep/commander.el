@@ -4,10 +4,11 @@ Command line parsing for Emacs.
 
 ## Installation
 
-I recommend installing via ELPA, but manual installation is simple as well:
+Add `commander` to your [Cask](https://github.com/rejeep/cask.el) file:
 
-    (add-to-list 'load-path "/path/to/commander")
-    (require 'commander)
+```lisp
+(depends-on "commander")
+```
 
 ## DSL
 
