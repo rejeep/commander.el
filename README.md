@@ -268,8 +268,9 @@ For each file argument, print the content.
 #### parse `(arguments)`
 
 Parse `arguments` with defined schema. If `#parse` is not called
-manually, it is done automatically with `(cdr
-command-line-args-left)` as value.
+explicitly, it is done automatically with `commander-args` first and
+if that's not present, it is called with the value of `(cdr
+command-line-args-left)`.
 
     (commander
      ;; schema

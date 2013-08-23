@@ -137,6 +137,9 @@ Slots:
 (defvar commander-no-command nil
   "Command to use when no command, only options and input.")
 
+(defvar commander-args nil
+  "If parse directive is not called explicitly, use this first, then `command-line-args-left'.")
+
 (defconst commander-option-re
   "\\(-[A-Za-z0-9-]\\|--?[A-Za-z0-9][A-Za-z0-9-]+\\)"
   "Regex matching an option flag.")
@@ -432,7 +435,7 @@ Slots:
               (commander-default command-or-function arguments)))
           (t (error "Unknown directive: %S" form)))))
      (unless commander-parsing-done
-       (commander-parse (cdr command-line-args-left)))))
+       (commander-parse (or commander-args (cdr command-line-args-left))))))
 
 (provide 'commander)
 
