@@ -52,11 +52,11 @@
   (with-sandbox
    (f-write-text "--foo bar" 'utf-8 "default.opts")
    (with-mock
-    (mock (foo) :times 1)
+    (mock (foo "bar") :times 1)
     (mock (bar) :times 1)
     (commander
      (config "default.opts")
-     (option "--foo" "..." foo)
+     (option "--foo <arg>" "..." foo)
      (option "--bar" "..." bar)
      (parse ("--bar"))))))
 

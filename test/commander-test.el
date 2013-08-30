@@ -46,6 +46,19 @@
     (default no-command "foo" "bar")
     (parse ("-x" "foo")))))
 
+(ert-deftest commander-test/without-default-function-no-arguments ()
+  (with-mock
+   (commander
+    (option "-x <arg>" "..." ignore)
+    (parse ("-x" "foo")))))
+
+(ert-deftest commander-test/without-default-function-invalid-command ()
+  (with-mock
+   (mock (error "Command `%s` not available" "eyy"))
+   (commander
+    (option "-x <arg>" "..." ignore)
+    (parse ("-x" "foo" "eyy")))))
+
 (ert-deftest commander-test/commander-args ()
   (with-mock
    (mock (foo) :times 1)

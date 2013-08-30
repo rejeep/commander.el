@@ -229,11 +229,12 @@ Slots:
                  (apply function rest))
                 (t
                  (funcall function))))
-      (when commander-no-command
+      (if commander-no-command
         (let ((function (commander-no-command-function commander-no-command)))
           (unless arguments
             (setq arguments (commander-no-command-arguments commander-no-command)))
-          (apply function arguments))))))
+          (apply function arguments))
+        (when command (error "Command `%s` not available" command))))))
 
 
 ;;;; Usage
