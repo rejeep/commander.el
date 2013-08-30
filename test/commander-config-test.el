@@ -133,3 +133,15 @@
      (config "default.opts")
      (option "--foo <arg>" "..." foo)
      (parse ("--foo" "baz"))))))
+
+(ert-deftest commander-config-test/whitespace ()
+  (with-sandbox
+   (f-write-text "\n\n--foo bar\n\n--baz\n\n" 'utf-8 "default.opts")
+   (with-mock
+    (mock (foo "bar") :times 1)
+    (mock (baz) :times 1)
+    (commander
+     (config "default.opts")
+     (option "--foo <arg>" "..." foo)
+     (option "--baz" "..." baz)
+     (parse nil)))))

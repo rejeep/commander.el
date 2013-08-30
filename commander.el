@@ -378,7 +378,7 @@ Slots:
 
 (defun commander-config (file)
   (when (f-file? file)
-    (let ((lines (s-lines (f-read-text file 'utf-8))))
+    (let ((lines (-reject 's-blank? (s-lines (f-read-text file 'utf-8)))))
       (setq commander-default-config
             (-flatten (--map (s-split " " it) lines))))))
 
