@@ -292,6 +292,11 @@ Slots:
   "Print usage information."
   (message (commander-usage)))
 
+(defun commander-print-usage-and-exit (&optional arg)
+  "Print usage information and exit."
+  (commander-print-usage)
+  (kill-emacs arg))
+
 
 
 (defun commander-option (flags description function default-values)
