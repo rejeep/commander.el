@@ -1,0 +1,1 @@
+--load test/commander-init.el test/ert-loader.el
