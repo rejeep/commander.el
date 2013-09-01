@@ -9,7 +9,7 @@ unit:
 	${CASK} exec ert-runner -l test/commander-init.el test/ert-loader.el
 
 ecukes:
-	${CASK} exec ecukes --script features --dbg
+	${CASK} exec ecukes --script features --debug
 
 compile:
 	${CASK} exec ${EMACS} -Q -batch -f batch-byte-compile commander.el
