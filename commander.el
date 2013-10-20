@@ -295,7 +295,7 @@ Slots:
 (defun commander-print-usage-and-exit (&optional arg)
   "Print usage information and exit."
   (commander-print-usage)
-  (kill-emacs arg))
+  (kill-emacs (or arg 0)))
 
 
 
