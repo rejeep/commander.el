@@ -174,3 +174,33 @@ Feature: Usage
                       AND
                       FRIENDS
       """
+
+  Scenario: Auto docs
+    Given this schedule:
+      """
+      (commander
+       (name "command")
+
+       (command "foo" foo)
+       (command "bar" bar 1 2 3)
+
+       (option "--baz" baz)
+       (option "--qux" "Qux" qux 1 2 3))
+      """
+    Then usage should be:
+      """
+      USAGE: command [COMMAND] [OPTIONS]
+
+      COMMANDS:
+
+       bar            Print BAR.
+                      
+                      More info.
+                      And more info.
+       foo            Return FOO.
+
+      OPTIONS:
+
+       --qux          Qux
+       --baz          
+      """

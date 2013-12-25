@@ -14,10 +14,25 @@
 
 (add-to-list 'load-path commander-root-path)
 
+(unload-feature 'commander 'force)
+
 (require 'espuds)
 (unless (require 'ert nil 'noerror)
   (require 'ert (f-expand "ert" commander-vendor-path)))
 (require 'commander)
+
+(defun foo ()
+  "Return FOO.")
+
+(defun bar ()
+  "Print BAR.
+
+More info.
+And more info.")
+
+(defun baz ())
+
+(defun qux ())
 
 (Before
  (setq commander-args nil))
