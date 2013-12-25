@@ -4,7 +4,7 @@ Command line parsing for Emacs.
 
 ## Installation
 
-Add `commander` to your [Cask](https://github.com/rejeep/cask.el) file:
+Add `commander` to your [Cask](https://github.com/cask/cask) file:
 
 ```lisp
 (depends-on "commander")
@@ -28,9 +28,11 @@ Add `commander` to your [Cask](https://github.com/rejeep/cask.el) file:
 
 Define schema within this block.
 
-    (commander
-     ;; schema here
-     )
+```lisp
+(commander
+ ;; schema here
+ )
+```
 
 #### command `(&rest args)`
 
@@ -47,76 +49,100 @@ Define a command.
 
 Define the command `foo` with no arguments.
 
-    (commander
-     (command "foo" "Foo" fn))
+```lisp
+(commander
+ (command "foo" "Foo" fn))
+```
 
 ##### Usage
 
-    $ emacs -Q -- foo
+```sh
+$ emacs -Q -- foo
+```
 
 ##### Example
 
 Define the command `foo` with a required argument.
 
-    (commander
-     (command "foo <bar>" "Foo" fn))
+```lisp
+(commander
+ (command "foo <bar>" "Foo" fn))
+```
 
 ##### Usage
 
-     $ emacs -Q -- foo bar
+```sh
+$ emacs -Q -- foo bar
+```
 
 ##### Example
 
 Define the command `foo` with an optional argument. If argument is not
 specified, `"baz"` will be used as the argument value.
 
-    (commander
-     (command "foo [bar]" "Foo" fn "baz"))
+```lisp
+(commander
+ (command "foo [bar]" "Foo" fn "baz"))
+```
 
 ##### Usage
 
-     $ emacs -Q -- foo
-     $ emacs -Q -- foo qux
+```sh
+$ emacs -Q -- foo
+$ emacs -Q -- foo qux
+```
 
 ##### Example
 
 Define the command `foo` with at least one required argument.
 
-    (commander
-     (command "foo <*>" "Foo" fn))
+```lisp
+(commander
+ (command "foo <*>" "Foo" fn))
+```
 
 ##### Usage
 
-     $ emacs -Q -- foo bar
-     $ emacs -Q -- foo bar baz qux
+```sh
+$ emacs -Q -- foo bar
+$ emacs -Q -- foo bar baz qux
+```
 
 ##### Example
 
 Define the command `foo` with zero or more arguments.
 
-    (commander
-     (command "foo [*]" "Foo" fn))
+```lisp
+(commander
+ (command "foo [*]" "Foo" fn))
+```
 
 ##### Usage
 
-     $ emacs -Q -- foo
-     $ emacs -Q -- foo bar baz qux
+```sh
+$ emacs -Q -- foo
+$ emacs -Q -- foo bar baz qux
+```
 
 ##### Example
 
 Define the command `foo` without description. The `foo` doc-string
 will be used as description.
 
-    (defun foo ()
-      "Return FOO.")
+```lisp
+(defun foo ()
+  "Return FOO.")
 
-    (commander
-     (default commander-print-usage-and-exit)
-     (command "foo" foo))
+(commander
+ (default commander-print-usage-and-exit)
+ (command "foo" foo))
+```
 
 ##### Usage
 
-    $ emacs -Q
+```sh
+$ emacs -Q
+```
 
 #### option `(&rest args)`
 
@@ -133,88 +159,116 @@ Define an option.
 
 Define the option `--foo` with no arguments.
 
-    (commander
-     (option "--foo" "Foo" fn))
+```lisp
+(commander
+ (option "--foo" "Foo" fn))
+```
 
 ##### Usage
 
-    $ emacs -Q -- --foo
+```sh
+$ emacs -Q -- --foo
+```
 
 ##### Example
 
 Define the option `--foo` with a required argument.
 
-    (commander
-     (command "--foo <bar>" "Foo" fn))
+```lisp
+(commander
+ (command "--foo <bar>" "Foo" fn))
+```
 
 ##### Usage
 
-    $ emacs -Q -- --foo bar
+```sh
+$ emacs -Q -- --foo bar
+```
 
 ##### Example
 
 Define the option `--foo` with an optional argument. If argument is not
 specified, `"baz"` will be used as the argument value.
 
-    (commander
-     (command "--foo [bar]" "Foo" fn "baz"))
+```lisp
+(commander
+ (command "--foo [bar]" "Foo" fn "baz"))
+```
 
 ##### Usage
 
-    $ emacs -Q -- --foo
-    $ emacs -Q -- --foo qux
+```sh
+$ emacs -Q -- --foo
+$ emacs -Q -- --foo qux
+```
 
 ##### Example
 
 Define the option `--foo` with at least one required argument.
 
-    (commander
-     (command "--foo <*>" "Foo" fn))
+```lisp
+(commander
+ (command "--foo <*>" "Foo" fn))
+```
 
 ##### Usage
 
-    $ emacs -Q -- --foo bar
-    $ emacs -Q -- --foo bar baz qux
+```sh
+$ emacs -Q -- --foo bar
+$ emacs -Q -- --foo bar baz qux
+```
 
 ##### Example
 
 Define the option `--foo` with zero or more arguments.
 
-    (commander
-     (command "--foo [*]" "Foo" fn))
+```lisp
+(commander
+ (command "--foo [*]" "Foo" fn))
+```
 
 ##### Usage
 
-    $ emacs -Q -- --foo
-    $ emacs -Q -- --foo bar baz qux
+```sh
+$ emacs -Q -- --foo
+$ emacs -Q -- --foo bar baz qux
+```
 
 ##### Example
 
 Define the option `--foo` with with an alias `-f`.
 
-    (commander
-     (option "--foo, -f" "Foo" fn))
+```lisp
+(commander
+ (option "--foo, -f" "Foo" fn))
+```
 
 ##### Usage
 
-    $ emacs -Q -- --foo
-    $ emacs -Q -- -f
+```sh
+$ emacs -Q -- --foo
+$ emacs -Q -- -f
+```
 
 ##### Example
 
 Define the option `--foo` without description. The `foo` doc-string
 will be used as description.
 
-    (defun foo ()
-      "Return FOO.")
+```lisp
+(defun foo ()
+  "Return FOO.")
 
-    (commander
-     (default commander-print-usage-and-exit)
-     (option "--foo" foo))
+(commander
+ (default commander-print-usage-and-exit)
+ (option "--foo" foo))
+```
 
 ##### Usage
 
-    $ emacs -Q
+```sh
+$ emacs -Q
+```
 
 #### name `(name)`
 
@@ -225,13 +279,17 @@ Specify name in usage information.
 Define the option `--help` that prints usage information with
 `my-awesome-program` as program name.
 
-    (commander
-     (name "my-awesome-program")
-     (option "--help" "Show usage information" commander-print-usage))
+```lisp
+(commander
+ (name "my-awesome-program")
+ (option "--help" "Show usage information" commander-print-usage))
+```
 
 ##### Usage
 
-    $ emacs -Q -- --help
+```sh
+$ emacs -Q -- --help
+```
 
 #### description `(description)`
 
@@ -241,14 +299,18 @@ Specify description in usage information.
 
 Define the option `--help` that prints usage information with description.
 
-    (commander
-     (name "my-awesome-program")
-     (description "Truly awesome program, does what you wish for")
-     (option "--help" "Show usage information" commander-print-usage))
+```lisp
+(commander
+ (name "my-awesome-program")
+ (description "Truly awesome program, does what you wish for")
+ (option "--help" "Show usage information" commander-print-usage))
+```
 
 ##### Usage
 
-    $ emacs -Q -- --help
+```sh
+$ emacs -Q -- --help
+```
 
 #### default `(command-or-function &rest arguments)`
 
@@ -263,31 +325,39 @@ first argument does not match a command.
 Define two commands `show` and `hide` and make `show` the default with
 `everyone` as argument.
 
-    (commander
-     (default "show" "everyone")
-     (command "show <stuff>" "Show stuff" show)
-     (command "hide <stuff>" "Hide stuff" hide))
+```lisp
+(commander
+ (default "show" "everyone")
+ (command "show <stuff>" "Show stuff" show)
+ (command "hide <stuff>" "Hide stuff" hide))
+```
 
 ##### Usage
 
-    $ emacs -Q -- show me
-    $ emacs -Q -- hide you
-    $ emacs -Q
+```sh
+$ emacs -Q -- show me
+$ emacs -Q -- hide you
+$ emacs -Q
+```
 
 ##### Example
 
 For each file argument, print the content.
 
-    (defun print-file-content (file)
-      (princ (f-read file)))
+```lisp
+(defun print-file-content (file)
+  (princ (f-read file)))
 
-    (commander
-     (default print-file-content "foo.txt"))
+(commander
+ (default print-file-content "foo.txt"))
+```
 
 ##### Usage
 
-    $ emacs -Q -- foo.txt bar.txt
-    $ emacs -Q
+```sh
+$ emacs -Q -- foo.txt bar.txt
+$ emacs -Q
+```
 
 #### config `(file)`
 
@@ -298,19 +368,23 @@ or option, including arguments.
 
 For each file argument, print the content.
 
-    ;; cmd.opts
-    ;;
-    ;;  --foo bar
+```lisp
+;; cmd.opts
+;;
+;;  --foo bar
 
-    (commander
-     (config "cmd.opts")
-     (option "--foo <arg>" "..." ignore)
-     (option "--bar <arg>" "..." ignore))
+(commander
+ (config "cmd.opts")
+ (option "--foo <arg>" "..." ignore)
+ (option "--bar <arg>" "..." ignore))
+```
 
 ##### Usage
 
-    $ emacs -Q -- --bar arg
-    $ emacs -Q
+```sh
+$ emacs -Q -- --bar arg
+$ emacs -Q
+```
 
 #### parse `(arguments)`
 
@@ -319,51 +393,61 @@ explicitly, it is done automatically with `commander-args` first and
 if that's not present, it is called with the value of `(cdr
 command-line-args-left)`.
 
-    (commander
-     ;; schema
+```lisp
+(commander
+ ;; schema
 
-     (parse some-custom-variable)
-     )
+ (parse some-custom-variable)
+ )
+```
 
 ## Examples
 
 Create a new project, with optional dev mode:
 
-    ;; emacs -Q -- create
-    ;; emacs -Q -- create --dev
-    (commander
-     (command "create" "Create new project" create)
-     (option "--dev" "Run command in dev mode" dev-mode))
+```lisp
+;; emacs -Q -- create
+;; emacs -Q -- create --dev
+(commander
+ (command "create" "Create new project" create)
+ (option "--dev" "Run command in dev mode" dev-mode))
+```
 
 Simple find task:
 
-    ;; emacs -Q -- find
-    ;; emacs -Q -- find path/to/dir --name 'foo.el' --type f
-    (commander
-     (command "find [path]" "Find stuff" find)
-     (option "--name <path>" "Specify file name" name)
-     (option "--type <type>" "Specify file type" type))
+```lisp
+;; emacs -Q -- find
+;; emacs -Q -- find path/to/dir --name 'foo.el' --type f
+(commander
+ (command "find [path]" "Find stuff" find)
+ (option "--name <path>" "Specify file name" name)
+ (option "--type <type>" "Specify file type" type))
+```
 
 Automatic usage information (note that if description is not
 specified, the function doc-string is used as description):
 
-    (commander
-     (command "find [path]" "Find stuff" find)
-     (command "help" "Show usage information" commander-print-usage)
-     (option "--name <path>" "Specify file name" name)
-     (option "--type <type>" "Specify file type" type))
+```lisp
+(commander
+ (command "find [path]" "Find stuff" find)
+ (command "help" "Show usage information" commander-print-usage)
+ (option "--name <path>" "Specify file name" name)
+ (option "--type <type>" "Specify file type" type))
+```
 
 The command `emacs -Q -- help` will print:
 
-    USAGE: find COMMAND [OPTIONS]
+```
+USAGE: find COMMAND [OPTIONS]
 
-    COMMANDS:
-     help                Show usage information
-     find                Find stuff
+COMMANDS:
+ helpShow usage information
+ findFind stuff
 
-    OPTIONS:
-     --type              Specify file type
-     --name              Specify file name
+OPTIONS:
+ --type  Specify file type
+ --name  Specify file name
+```
 
 For more examples, check out: https://github.com/rejeep/commander.el/tree/master/examples
 
@@ -371,12 +455,16 @@ For more examples, check out: https://github.com/rejeep/commander.el/tree/master
 
 Contribution is much welcome!
 
-Install [cask](https://github.com/rejeep/cask) if you haven't
+Install [cask](https://github.com/cask/cask) if you haven't
 already, then:
 
-    $ cd /path/to/commander.el
-    $ cask
+```sh
+$ cd /path/to/commander.el
+$ cask
+```
 
 Run all tests with:
 
-    $ make
+```sh
+$ make
+```
