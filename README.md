@@ -15,8 +15,8 @@ Add `commander` to your [Cask](https://github.com/rejeep/cask.el) file:
 ### Overview
 
 * [commander](https://github.com/rejeep/commander.el#commander-rest-forms) `(&rest forms)`
-* [command](https://github.com/rejeep/commander.el#command-command-description-function-rest-default-values) `(command description function &rest default-values)`
-* [option](https://github.com/rejeep/commander.el#option-flags-description-function-rest-default-values) `(flags description function &rest default-values)`
+* [command](https://github.com/rejeep/commander.el#command-rest-args) `(&rest args)`
+* [option](https://github.com/rejeep/commander.el#option-rest-args) `(&rest args)`
 * [name](https://github.com/rejeep/commander.el#name-name) `(name)`
 * [description](https://github.com/rejeep/commander.el#description-description) `(description)`
 * [default](https://github.com/rejeep/commander.el#default-command-or-function-rest-arguments) `(command-or-function &rest arguments)`
@@ -32,9 +32,16 @@ Define schema within this block.
      ;; schema here
      )
 
-#### command `(command description function &rest default-values)`
+#### command `(&rest args)`
 
 Define a command.
+
+* First argument is the name of the command.
+* Second argument either:
+  * a description of the command
+  * the command function (the function doc-string will be used as description)
+* Third argument is command function if description is specified
+* Rest of `args` are command default values
 
 ##### Example
 
@@ -95,9 +102,32 @@ Define the command `foo` with zero or more arguments.
      $ emacs -Q -- foo
      $ emacs -Q -- foo bar baz qux
 
-#### option `(flags description function &rest default-values)`
+##### Example
+
+Define the command `foo` without description. The `foo` doc-string
+will be used as description.
+
+    (defun foo ()
+      "Return FOO.")
+
+    (commander
+     (default commander-print-usage-and-exit)
+     (command "foo" foo))
+
+##### Usage
+
+    $ emacs -Q
+
+#### option `(&rest args)`
 
 Define an option.
+
+* First argument is the flags.
+* Second argument either:
+  * a description of the option
+  * the option function (the function doc-string will be used as description)
+* Third argument is option function if description is specified
+* Rest of `args` are option default values
 
 ##### Example
 
@@ -169,6 +199,22 @@ Define the option `--foo` with with an alias `-f`.
 
     $ emacs -Q -- --foo
     $ emacs -Q -- -f
+
+##### Example
+
+Define the option `--foo` without description. The `foo` doc-string
+will be used as description.
+
+    (defun foo ()
+      "Return FOO.")
+
+    (commander
+     (default commander-print-usage-and-exit)
+     (option "--foo" foo))
+
+##### Usage
+
+    $ emacs -Q
 
 #### name `(name)`
 
@@ -298,13 +344,14 @@ Simple find task:
      (option "--name <path>" "Specify file name" name)
      (option "--type <type>" "Specify file type" type))
 
-Automatic usage information:
+Automatic usage information (note that if description is not
+specified, the function doc-string is used as description):
 
     (commander
      (command "find [path]" "Find stuff" find)
      (command "help" "Show usage information" commander-print-usage)
      (option "--name <path>" "Specify file name" name)
-     (option "--type <type>" "Specify file type" name))
+     (option "--type <type>" "Specify file type" type))
 
 The command `emacs -Q -- help` will print:
 

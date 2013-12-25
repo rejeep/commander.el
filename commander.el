@@ -182,7 +182,7 @@ Slots:
                                   (while (and (nth (1+ i) arguments) (not (s-matches? (s-concat "\\`" commander-option-re "\\'") (nth (1+ i) arguments))))
                                     (setq i (1+ i))
                                     (push (nth i arguments) next-arguments))
-                                   (nreverse next-arguments))
+                                  (nreverse next-arguments))
                               (when (and (nth (1+ i) arguments) (not (s-matches? (s-concat "\\`" commander-option-re "\\'") (nth (1+ i) arguments))))
                                 (setq i (1+ i))
                                 (nth i arguments))))))
@@ -230,10 +230,10 @@ Slots:
                 (t
                  (funcall function))))
       (if commander-no-command
-        (let ((function (commander-no-command-function commander-no-command)))
-          (unless arguments
-            (setq arguments (commander-no-command-arguments commander-no-command)))
-          (apply function arguments))
+          (let ((function (commander-no-command-function commander-no-command)))
+            (unless arguments
+              (setq arguments (commander-no-command-arguments commander-no-command)))
+            (apply function arguments))
         (when command (error "Command `%s` not available" command))))))
 
 
@@ -299,7 +299,7 @@ Slots:
 
 
 
-(defun commander-option (flags description function default-values)
+(defun commander-option (flags description function &rest default-values)
   (let (required optional zero-or-more one-or-more)
     (-map
      (lambda (flag)
@@ -332,7 +332,7 @@ Slots:
            :to-string to-string))))
      (-map 's-trim (s-split "," flags)))))
 
-(defun commander-command (command description function args)
+(defun commander-command (command description function &rest args)
   (let* (required
          optional
          zero-or-more
@@ -403,6 +403,23 @@ Slots:
 
 
 
+(defun commander--make-args (args)
+  "Make proper command/option arguments from ARGS.
+
+ARGS is the args that are passed to the `command' and `option'
+directives. The return value is a list complete list that can be
+sent to `commander-command' and `commander-options'.
+
+If ARGS does not contain documentation, it is fetched from the
+function doc string."
+  (when (functionp (nth 1 args))
+    (let ((description
+           (-if-let (description (documentation (nth 1 args)))
+               (s-lines description)
+             "")))
+      (setq args (-insert-at 1 description args))))
+  args)
+
 (defmacro commander (&rest forms)
   `(progn
      (setq commander-default-config nil)
@@ -418,11 +435,11 @@ Slots:
       (lambda (form)
         (cl-case (car form)
           (option
-           (cl-destructuring-bind (_ flags description function &rest default-values) form
-             (commander-option flags description function default-values)))
+           (cl-destructuring-bind (_ &rest args) form
+             (apply 'commander-option (commander--make-args args))))
           (command
-           (cl-destructuring-bind (_ command description function &rest args) form
-             (commander-command command description function args)))
+           (cl-destructuring-bind (_ &rest args) form
+             (apply 'commander-command (commander--make-args args))))
           (parse
            (cl-destructuring-bind (_ arguments) form
              (commander-parse arguments)
