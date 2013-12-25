@@ -61,6 +61,7 @@ Slots:
 
 `to-string' String representation of option."
   flag
+  flags
   description
   function
   default-values
@@ -236,6 +237,17 @@ Slots:
             (apply function arguments))
         (when command (error "Command `%s` not available" command))))))
 
+(defun commander--usage-commands ()
+  (nreverse commander-commands))
+
+(defun commander--usage-options ()
+  (let ((-compare-fn
+         (lambda (option-a option-b)
+           (string=
+            (commander-option-to-string option-a)
+            (commander-option-to-string option-b)))))
+    (nreverse (-uniq commander-options))))
+
 
 ;;;; Usage
 
@@ -276,9 +288,9 @@ Slots:
   "Return usage information as a string."
   (let ((name (or commander-name (f-filename load-file-name)))
         (commands-string
-         (s-join "\n" (--map (commander--usage-command it) commander-commands)))
+         (s-join "\n" (--map (commander--usage-command it) (commander--usage-commands))))
         (options-string
-         (s-join "\n" (--map (commander--usage-option it) commander-options))))
+         (s-join "\n" (--map (commander--usage-option it) (commander--usage-options)))))
     (s-concat
      (format "USAGE: %s [COMMAND] [OPTIONS]" name)
      (when commander-description
@@ -303,7 +315,7 @@ Slots:
   (let (required optional zero-or-more one-or-more)
     (-map
      (lambda (flag)
-       (let ((to-string flag))
+       (let ((to-string flags))
          (let ((matches (s-match (concat "\\`" commander-option-re " " "<\\(.+\\)>" "\\'") flag)))
            (when matches
              (setq flag (nth 1 matches))
@@ -322,6 +334,7 @@ Slots:
           'commander-options
           (make-commander-option
            :flag flag
+           :flags flags
            :description description
            :function function
            :default-values default-values
