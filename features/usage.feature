@@ -55,8 +55,8 @@ Feature: Usage
 
       OPTIONS:
 
-       --bar          BAR
        --foo          FOO
+       --bar          BAR
       """
 
   Scenario: Name and command
@@ -89,8 +89,8 @@ Feature: Usage
 
       COMMANDS:
 
-       bar          BAR
        foo          FOO
+       bar          BAR
       """
 
   Scenario: Name, options and commands
@@ -109,13 +109,13 @@ Feature: Usage
 
       COMMANDS:
 
-       bar            BAR
        foo            FOO
+       bar            BAR
 
       OPTIONS:
 
-       --bar          BAR
        --foo          FOO
+       --bar          BAR
       """
 
   Scenario: Name, description, options and commands
@@ -137,13 +137,13 @@ Feature: Usage
 
       COMMANDS:
 
-       bar            BAR
        foo            FOO
+       bar            BAR
 
       OPTIONS:
 
-       --bar          BAR
        --foo          FOO
+       --bar          BAR
       """
 
   Scenario: Multiline descriptions
@@ -162,17 +162,17 @@ Feature: Usage
 
       COMMANDS:
 
-       bar            BAR
        foo            FOO
                       AND
                       FRIENDS
+       bar            BAR
 
       OPTIONS:
 
-       --bar          BAR
        --foo          FOO
                       AND
                       FRIENDS
+       --bar          BAR
       """
 
   Scenario: Auto docs
@@ -193,14 +193,43 @@ Feature: Usage
 
       COMMANDS:
 
+       foo            Return FOO.
        bar            Print BAR.
                       
                       More info.
                       And more info.
-       foo            Return FOO.
 
       OPTIONS:
 
-       --qux          Qux
        --baz          
+       --qux          Qux
+      """
+
+  Scenario: Uniq options
+    Given this schedule:
+      """
+      (commander
+       (name "command")
+
+       (command "baz <qux>" "BAZ" ignore)
+       (command "foo" "FOO" ignore)
+       (command "bar" "BAR" ignore)
+
+       (option "--bar, --baz, -q" "BAR, BAZ and q" ignore)
+       (option "--foo" "foo" ignore))
+      """
+    Then usage should be:
+      """
+      USAGE: command [COMMAND] [OPTIONS]
+
+      COMMANDS:
+
+       baz <qux>                 BAZ
+       foo                       FOO
+       bar                       BAR
+
+      OPTIONS:
+
+       --bar, --baz, -q          BAR, BAZ and q
+       --foo                     foo
       """
