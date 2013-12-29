@@ -302,7 +302,7 @@ Slots:
 
 (defun commander-print-usage ()
   "Print usage information."
-  (message (commander-usage)))
+  (princ (concat (commander-usage) "\n")))
 
 (defun commander-print-usage-and-exit (&optional arg)
   "Print usage information and exit."
