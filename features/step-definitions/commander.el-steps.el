@@ -4,4 +4,4 @@
 
 (Then "^usage should be:$"
   (lambda (usage)
-    (should (equal usage (commander-usage)))))
+    (should (string= usage (commander-usage)))))
