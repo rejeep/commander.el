@@ -304,10 +304,13 @@ Slots:
   "Print usage information."
   (princ (concat (commander-usage) "\n")))
 
-(defun commander-print-usage-and-exit (&optional arg)
-  "Print usage information and exit."
+(defun commander-print-usage-and-exit (&optional exit-code)
+  "Print usage information and exit.
+
+If EXIT-CODE is specified, with with this code.  Default exit
+code is 0."
   (commander-print-usage)
-  (kill-emacs (or arg 0)))
+  (kill-emacs (or exit-code 0)))
 
 
 
