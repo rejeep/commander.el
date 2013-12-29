@@ -300,9 +300,26 @@ Slots:
      (when commander-options
        (s-concat "\n\nOPTIONS:\n\n" options-string)))))
 
+(defun commander-usage-for (command-name)
+  "Return description for COMMAND-NAME.
+
+Return value is always a list with one item for each row."
+  (-if-let (command (commander--find-command command-name))
+      (let ((description (commander-command-description command)))
+        (unless (listp description)
+          (setq description (list description)))
+        description)
+    (error "No such command: %s" command-name)))
+
 (defun commander-print-usage ()
   "Print usage information."
   (princ (concat (commander-usage) "\n")))
+
+(defun commander-print-usage-for (command-name)
+  "Print usage information for COMMAND-NAME."
+  (-each (commander-usage-for command-name)
+         (lambda (row)
+           (princ (concat row "\n")))))
 
 (defun commander-print-usage-and-exit (&optional exit-code)
   "Print usage information and exit.
@@ -310,6 +327,14 @@ Slots:
 If EXIT-CODE is specified, with with this code.  Default exit
 code is 0."
   (commander-print-usage)
+  (kill-emacs (or exit-code 0)))
+
+(defun commander-print-usage-for-and-exit (command-name &optional exit-code)
+  "Print usage information for COMMAND-NAME and exit.
+
+If EXIT-CODE is specified, with with this code.  Default exit
+code is 0."
+  (commander-print-usage-for command-name)
   (kill-emacs (or exit-code 0)))
 
 
