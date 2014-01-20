@@ -41,6 +41,7 @@
 
 (cl-defstruct commander-option
   "Structure describing an option.
+
 Slots:
 
 `flag' The option name (-f, -foo, --foo).
@@ -60,57 +61,54 @@ Slots:
 `one-or-more' One or more arguments allowed or required.
 
 `to-string' String representation of option."
-  flag
-  flags
-  description
-  function
-  default-values
-  required
-  optional
-  zero-or-more
-  one-or-more
-  to-string)
+  flag flags description function default-values required optional
+  zero-or-more one-or-more to-string)
 
 (cl-defstruct commander-command
   "Structure describing a command.
+
 Slots:
 
 `command' The command name (foo, foo-bar).
+
 `description' Description of what the command does.
+
 `function' Function to run when command used.
+
 `default-values' Default values to call `function' with if none given.
+
 `required' Required argument(s).
+
 `optional' Optional argument(s).
+
 `zero-or-more' Zero or more arguments allowed or required.
+
 `one-or-more' One or more arguments allowed or required.
+
 `to-string' String representation of command."
-  command
-  description
-  function
-  default-values
-  required
-  optional
-  zero-or-more
-  one-or-more
-  to-string)
+  command description function default-values required optional
+  zero-or-more one-or-more to-string)
 
 (cl-defstruct commander-default-command
   "Structure describing the default command.
+
 Slots:
 
 `command' The name of the default command.
+
 `arguments' The arguments to use for `command'."
-  command
-  arguments)
+  command arguments)
 
 (cl-defstruct commander-no-command
   "Structure describing the no command.
+
 Slots:
 
 `function' The function to call when no command.
+
 `arguments' The arguments to use for `function'."
-  function
-  arguments)
+  function arguments)
+
 
 
 
