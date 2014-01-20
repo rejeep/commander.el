@@ -405,15 +405,23 @@ code is 0."
       :one-or-more one-or-more
       :to-string to-string))))
 
+(defun commander-ignore-p ()
+  "Returns true if parsing should be ignored, false otherwise.
+
+By setting the variable `commander-ignore' to true, the parsing
+will be ignored.  This is useful in for example unit tests."
+  (and (boundp 'commander-ignore) commander-ignore))
+
 (defun commander-parse (arguments)
-  (let* ((rest-config (commander--handle-options commander-default-config))
-         (rest (or (commander--handle-options arguments) rest-config)))
-    (unless rest
-      (if commander-default-command
-          (let ((command (commander-default-command-command commander-default-command))
-                (arguments (commander-default-command-arguments commander-default-command)))
-            (setq rest (cons command arguments)))))
-    (commander--handle-command rest)))
+  (unless (commander-ignore-p)
+    (let* ((rest-config (commander--handle-options commander-default-config))
+           (rest (or (commander--handle-options arguments) rest-config)))
+      (unless rest
+        (if commander-default-command
+            (let ((command (commander-default-command-command commander-default-command))
+                  (arguments (commander-default-command-arguments commander-default-command)))
+              (setq rest (cons command arguments)))))
+      (commander--handle-command rest))))
 
 (defun commander-name (name)
   (setq commander-name name))
