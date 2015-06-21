@@ -176,7 +176,7 @@ Define the option `--foo` with a required argument.
 
 ```lisp
 (commander
- (command "--foo <bar>" "Foo" fn))
+ (option "--foo <bar>" "Foo" fn))
 ```
 
 ##### Usage
@@ -192,7 +192,7 @@ specified, `"baz"` will be used as the argument value.
 
 ```lisp
 (commander
- (command "--foo [bar]" "Foo" fn "baz"))
+ (option "--foo [bar]" "Foo" fn "baz"))
 ```
 
 ##### Usage
@@ -208,7 +208,7 @@ Define the option `--foo` with at least one required argument.
 
 ```lisp
 (commander
- (command "--foo <*>" "Foo" fn))
+ (option "--foo <*>" "Foo" fn))
 ```
 
 ##### Usage
@@ -224,7 +224,7 @@ Define the option `--foo` with zero or more arguments.
 
 ```lisp
 (commander
- (command "--foo [*]" "Foo" fn))
+ (option "--foo [*]" "Foo" fn))
 ```
 
 ##### Usage
