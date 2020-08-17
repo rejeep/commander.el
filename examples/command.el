@@ -9,7 +9,7 @@
   (say "Four"))
 
 (defun sum (&rest args)
-  (message "Sum is: %d" (apply '+ (mapcar 'string-to-int args))))
+  (message "Sum is: %d" (apply '+ (mapcar 'string-to-number args))))
 
 (commander
  (option "--say <*>" "..." say)
