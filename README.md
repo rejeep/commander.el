@@ -4,10 +4,26 @@ Command line parsing for Emacs.
 
 ## Installation
 
+### With Cask
+
 Add `commander` to your [Cask](https://github.com/cask/cask) file:
 
 ```lisp
 (depends-on "commander")
+```
+
+### With GNU Guix
+
+To add `commander` to your default [profile](https://guix.gnu.org/en/blog/2019/guix-profiles-in-practice/), run the following command:
+
+```sh
+guix install emacs-commander
+```
+
+To create a shell [environment](https://guix.gnu.org/manual/en/html_node/Invoking-guix-environment.html) in which `commander` is available, run the following command:
+
+```sh
+guix environment --ad-hoc emacs emacs-commander --pure
 ```
 
 ## DSL
